@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SF NUSP Admin Panel</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d1b3e;
+      --sidebar: #091428;
+      --card: #112347;
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.6);
+      --accent: #c9a84c;
+      --border: rgba(201, 168, 76, 0.15);
+      --green: #4fd38a;
+      --red: #ff6b6b;
+      --shadow: 0 22px 60px rgba(0, 0, 0, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .admin-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+    }
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: 280px;
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      padding: 28px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+      z-index: 40;
+    }
+
+    .sidebar-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1px solid rgba(201, 168, 76, 0.5);
+      box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.08);
+      flex-shrink: 0;
+    }
+
+    .logo-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .sidebar-title {
+      display: grid;
+      gap: 2px;
+    }
+
+    .sidebar-title strong {
+      font-size: 0.98rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .sidebar-title span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .sidebar-nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-item,
+    .logout-button,
+    .menu-button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .nav-item {
+      min-height: 48px;
+      width: 100%;
+      border-left: 3px solid transparent;
+      border-radius: 0 12px 12px 0;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+      text-align: left;
+    }
+
+    .nav-item:hover,
+    .nav-item:focus-visible {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .nav-item.is-active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: rgba(201, 168, 76, 0.08);
+    }
+
+    .nav-icon {
+      width: 22px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+    }
+
+    .logout-button {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.02);
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .logout-button:hover,
+    .logout-button:focus-visible {
+      background: rgba(201, 168, 76, 0.08);
+      border-color: rgba(201, 168, 76, 0.3);
+    }
+
+    .mobile-topbar {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 45;
+      padding: 16px;
+      background: rgba(9, 20, 40, 0.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .mobile-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .mobile-brand strong {
+      font-size: 0.95rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .menu-button {
+      width: 46px;
+      height: 46px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-size: 1.15rem;
+    }
+
+    .main {
+      grid-column: 2;
+      padding: 36px;
+    }
+
+    .content-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .view {
+      display: none;
+      animation: fade-view 0.28s ease;
+    }
+
+    .view.is-active {
+      display: block;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: clamp(1.9rem, 4vw, 2.7rem);
+      line-height: 1.05;
+    }
+
+    .page-header p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 28px;
+    }
+
+    .card,
+    .data-card,
+    .activity-card,
+    .toggle-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .card {
+      padding: 22px;
+    }
+
+    .card-label {
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .card-value {
+      margin-top: 18px;
+      color: var(--accent);
+      font-size: clamp(2.3rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .status-open,
+    .status-closed {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .status-open {
+      color: var(--green);
+    }
+
+    .status-closed {
+      color: var(--red);
+    }
+
+    .activity-card,
+    .toggle-panel {
+      padding: 24px;
+      margin-top: 24px;
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      font-size: 1.15rem;
+    }
+
+    .section-muted {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .data-stack {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .data-card {
+      padding: 20px;
+      border-left: 3px solid var(--accent);
+      transition: transform 0.22s ease, filter 0.22s ease;
+    }
+
+    .data-card:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.06);
+    }
+
+    .data-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .data-top strong {
+      font-size: 1.02rem;
+    }
+
+    .date-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: rgba(201, 168, 76, 0.14);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 18px;
+    }
+
+    .detail {
+      display: grid;
+      gap: 6px;
+    }
+
+    .detail span {
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .detail p {
+      margin: 0;
+      color: var(--text);
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .detail.full {
+      grid-column: 1 / -1;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .toggle-row strong {
+      font-size: 1rem;
+    }
+
+    .switch {
+      position: relative;
+      width: 68px;
+      height: 36px;
+      display: inline-block;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      transition: background 0.25s ease, border-color 0.25s ease;
+      cursor: pointer;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #ffffff;
+      transition: transform 0.25s ease, background 0.25s ease;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
+    }
+
+    .switch input:checked + .slider {
+      background: rgba(201, 168, 76, 0.22);
+      border-color: rgba(201, 168, 76, 0.32);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(32px);
+      background: var(--accent);
+    }
+
+    .toggle-note {
+      margin: 12px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 640px;
+    }
+
+    @keyframes fade-view {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .admin-shell {
+        display: block;
+      }
+
+      .mobile-topbar {
+        display: flex;
+      }
+
+      .sidebar {
+        width: min(320px, calc(100vw - 24px));
+        transform: translateX(-105%);
+        transition: transform 0.28s ease;
+        box-shadow: 18px 0 44px rgba(0, 0, 0, 0.28);
+      }
+
+      .sidebar.is-open {
+        transform: translateX(0);
+      }
+
+      .main {
+        grid-column: auto;
+        padding: 24px 16px 28px;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .data-top {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-topbar">
+    <div class="mobile-brand">
+      <span class="logo-mark">
+        <img src="../assets/Adobe%20Express%20-%20file.png" alt="SF NUSP logo">
+      </span>
+      <strong>Admin Panel</strong>
+    </div>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="admin-sidebar" aria-label="Open admin navigation">☰</button>
+  </div>
+
+  <div class="admin-shell">
+    <aside class="sidebar" id="admin-sidebar">
+      <div class="sidebar-top">
+        <span class="logo-mark">
+          <img src="../assets/Adobe%20Express%20-%20file.png" alt="SF NUSP logo">
+        </span>
+        <div class="sidebar-title">
+          <strong>SF NUSP</strong>
+          <span>Admin Panel</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Admin navigation">
+        <button class="nav-item is-active" type="button" data-view-target="dashboard">
+          <span class="nav-icon">🏠</span>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" type="button" data-view-target="join-requests">
+          <span class="nav-icon">👥</span>
+          <span>Join Requests</span>
+        </button>
+        <button class="nav-item" type="button" data-view-target="yuvaad-registrations">
+          <span class="nav-icon">🏛️</span>
+          <span>Yuvaad Registrations</span>
+        </button>
+        <button class="nav-item" type="button" data-view-target="settings">
+          <span class="nav-icon">⚙️</span>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="logout-button" type="button">Logout</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="content-wrap">
+        <section class="view is-active" data-view="dashboard">
+          <header class="page-header">
+            <h1>Welcome back, Admin 👋</h1>
+          </header>
+
+          <div class="summary-grid">
+            <article class="card">
+              <div class="card-label">Total Join Requests</div>
+              <div class="card-value">0</div>
+            </article>
+            <article class="card">
+              <div class="card-label">Yuvaad Registrations</div>
+              <div class="card-value">0</div>
+            </article>
+            <article class="card">
+              <div class="card-label">Registrations Status</div>
+              <div class="card-value">
+                <span class="status-open" data-status-label>Open</span>
+              </div>
+            </article>
+          </div>
+
+          <section class="activity-card">
+            <h2 class="section-title">Recent Activity</h2>
+            <p class="section-muted">No activity yet.</p>
+          </section>
+        </section>
+
+        <section class="view" data-view="join-requests">
+          <header class="page-header">
+            <h1>Join Requests</h1>
+            <p>People who want to join SF NUSP</p>
+          </header>
+
+          <div class="data-stack">
+            <article class="data-card">
+              <div class="data-top">
+                <strong>Rahul Sharma</strong>
+                <span class="date-badge">16 May 2026</span>
+              </div>
+              <div class="details-grid">
+                <div class="detail">
+                  <span>Age</span>
+                  <p>22</p>
+                </div>
+                <div class="detail">
+                  <span>Occupation</span>
+                  <p>Student</p>
+                </div>
+                <div class="detail">
+                  <span>Mobile</span>
+                  <p>+91 98765 43210</p>
+                </div>
+                <div class="detail">
+                  <span>Email</span>
+                  <p>rahul@email.com</p>
+                </div>
+                <div class="detail full">
+                  <span>How They Heard About NUSP</span>
+                  <p>Instagram</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="data-card">
+              <div class="data-top">
+                <strong>Priya Mehta</strong>
+                <span class="date-badge">14 May 2026</span>
+              </div>
+              <div class="details-grid">
+                <div class="detail">
+                  <span>Age</span>
+                  <p>19</p>
+                </div>
+                <div class="detail">
+                  <span>Occupation</span>
+                  <p>Student</p>
+                </div>
+                <div class="detail">
+                  <span>Mobile</span>
+                  <p>+91 87654 32109</p>
+                </div>
+                <div class="detail">
+                  <span>Email</span>
+                  <p>priya@email.com</p>
+                </div>
+                <div class="detail full">
+                  <span>How They Heard About NUSP</span>
+                  <p>Friend</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="data-card">
+              <div class="data-top">
+                <strong>Amit Patel</strong>
+                <span class="date-badge">11 May 2026</span>
+              </div>
+              <div class="details-grid">
+                <div class="detail">
+                  <span>Age</span>
+                  <p>25</p>
+                </div>
+                <div class="detail">
+                  <span>Occupation</span>
+                  <p>Working Professional</p>
+                </div>
+                <div class="detail">
+                  <span>Mobile</span>
+                  <p>+91 76543 21098</p>
+                </div>
+                <div class="detail">
+                  <span>Email</span>
+                  <p>amit@email.com</p>
+                </div>
+                <div class="detail full">
+                  <span>How They Heard About NUSP</span>
+                  <p>Google</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" data-view="yuvaad-registrations">
+          <header class="page-header">
+            <h1>Yuvaad Registrations</h1>
+          </header>
+
+          <section class="toggle-panel">
+            <div class="toggle-row">
+              <strong>Registration Status:</strong>
+              <label class="switch" aria-label="Toggle registration status">
+                <input id="registration-toggle" type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+              <span class="status-open" data-status-label>Open</span>
+            </div>
+            <p class="toggle-note">When OFF, the registration page will show "Registrations Closed" to users. (Firebase connection coming soon)</p>
+          </section>
+
+          <div class="data-stack">
+            <article class="data-card">
+              <div class="data-top">
+                <strong>Sneha Kulkarni</strong>
+                <span class="date-badge">16 May 2026</span>
+              </div>
+              <div class="details-grid">
+                <div class="detail">
+                  <span>Age</span>
+                  <p>17</p>
+                </div>
+                <div class="detail">
+                  <span>Institution</span>
+                  <p>DPS Nagpur</p>
+                </div>
+                <div class="detail">
+                  <span>Occupation</span>
+                  <p>Student</p>
+                </div>
+                <div class="detail">
+                  <span>Mobile</span>
+                  <p>+91 95678 12345</p>
+                </div>
+                <div class="detail">
+                  <span>Email</span>
+                  <p>sneha@email.com</p>
+                </div>
+                <div class="detail">
+                  <span>City</span>
+                  <p>Nagpur</p>
+                </div>
+                <div class="detail full">
+                  <span>Why They Want To Join</span>
+                  <p>I want to represent my school in a real parliament setting.</p>
+                </div>
+                <div class="detail full">
+                  <span>How They Heard About Us</span>
+                  <p>Instagram</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="data-card">
+              <div class="data-top">
+                <strong>Rohan Desai</strong>
+                <span class="date-badge">15 May 2026</span>
+              </div>
+              <div class="details-grid">
+                <div class="detail">
+                  <span>Age</span>
+                  <p>20</p>
+                </div>
+                <div class="detail">
+                  <span>Institution</span>
+                  <p>VNIT Nagpur</p>
+                </div>
+                <div class="detail">
+                  <span>Occupation</span>
+                  <p>Student</p>
+                </div>
+                <div class="detail">
+                  <span>Mobile</span>
+                  <p>+91 84567 23456</p>
+                </div>
+                <div class="detail">
+                  <span>Email</span>
+                  <p>rohan@email.com</p>
+                </div>
+                <div class="detail">
+                  <span>City</span>
+                  <p>Nagpur</p>
+                </div>
+                <div class="detail full">
+                  <span>Why They Want To Join</span>
+                  <p>Passionate about policy and public speaking.</p>
+                </div>
+                <div class="detail full">
+                  <span>How They Heard About Us</span>
+                  <p>WhatsApp</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" data-view="settings">
+          <header class="page-header">
+            <h1>Settings</h1>
+            <p>Frontend-only placeholder for upcoming admin controls.</p>
+          </header>
+
+          <section class="activity-card">
+            <h2 class="section-title">System Notes</h2>
+            <p class="section-muted">Firebase-backed authentication, live submission syncing, and registration-state publishing will land here when the backend is connected.</p>
+          </section>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const REGISTRATION_STATE_KEY = "sf_nusp_registrations_open";
+    const menuButton = document.querySelector(".menu-button");
+    const sidebar = document.querySelector(".sidebar");
+    const navItems = document.querySelectorAll(".nav-item");
+    const views = document.querySelectorAll(".view");
+    const registrationToggle = document.querySelector("#registration-toggle");
+    const statusLabels = document.querySelectorAll("[data-status-label]");
+
+    function readRegistrationState() {
+      try {
+        const storedValue = window.localStorage.getItem(REGISTRATION_STATE_KEY);
+        return storedValue === null ? true : storedValue === "true";
+      } catch {
+        return true;
+      }
+    }
+
+    function writeRegistrationState(isOpen) {
+      try {
+        window.localStorage.setItem(REGISTRATION_STATE_KEY, String(isOpen));
+      } catch {
+        // Ignore storage failures and keep UI functional for this session.
+      }
+    }
+
+    function setActiveView(viewName) {
+      navItems.forEach((item) => {
+        const isActive = item.dataset.viewTarget === viewName;
+        item.classList.toggle("is-active", isActive);
+      });
+
+      views.forEach((view) => {
+        view.classList.toggle("is-active", view.dataset.view === viewName);
+      });
+
+      if (window.innerWidth <= 980) {
+        sidebar.classList.remove("is-open");
+        menuButton.setAttribute("aria-expanded", "false");
+        menuButton.setAttribute("aria-label", "Open admin navigation");
+      }
+    }
+
+    function updateStatusLabels() {
+      const isOpen = registrationToggle.checked;
+
+      statusLabels.forEach((label) => {
+        label.textContent = isOpen ? "OPEN" : "CLOSED";
+        label.classList.toggle("status-open", isOpen);
+        label.classList.toggle("status-closed", !isOpen);
+      });
+    }
+
+    navItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        setActiveView(item.dataset.viewTarget);
+      });
+    });
+
+    if (menuButton && sidebar) {
+      menuButton.addEventListener("click", () => {
+        const isOpen = menuButton.getAttribute("aria-expanded") === "true";
+        menuButton.setAttribute("aria-expanded", String(!isOpen));
+        menuButton.setAttribute("aria-label", isOpen ? "Open admin navigation" : "Close admin navigation");
+        sidebar.classList.toggle("is-open", !isOpen);
+      });
+    }
+
+    if (registrationToggle) {
+      registrationToggle.checked = readRegistrationState();
+      registrationToggle.addEventListener("change", () => {
+        writeRegistrationState(registrationToggle.checked);
+        updateStatusLabels();
+      });
+      updateStatusLabels();
+    }
+  </script>
+</body>
+</html>
