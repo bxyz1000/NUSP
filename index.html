@@ -587,6 +587,42 @@
     </defs>
   </svg>
 
+  <button id="back-to-top" onclick="scrollToTop()" style="
+  position:fixed;
+  bottom:90px;
+  right:24px;
+  width:44px;height:44px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.22);
+  color:#0D1B3E;
+  border:1px solid rgba(255,255,255,0.48);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  font-size:20px;
+  cursor:pointer;
+  display:none;
+  align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(13,27,62,0.16), inset 0 1px 0 rgba(255,255,255,0.45);
+  transition:all 0.3s;
+  z-index:998;">
+  ↑
+</button>
+
+  <script>
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('back-to-top');
+      if (window.scrollY > 400) {
+        btn.style.display = 'flex';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+  </script>
+
   <script src="app.js"></script>
 </body>
 

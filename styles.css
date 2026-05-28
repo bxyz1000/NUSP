@@ -37,6 +37,48 @@ body.is-loaded {
   opacity: 1;
 }
 
+body.dark-mode {
+  background-color: #060d1e !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .navbar-container {
+  background: rgba(6,13,30,0.95) !important;
+  border-bottom: 1px solid rgba(201,168,76,0.15) !important;
+}
+
+body.dark-mode section {
+  background-color: #060d1e !important;
+}
+
+body.dark-mode .stat-card,
+body.dark-mode .info-card,
+body.dark-mode .how-card,
+body.dark-mode .yuvaad-card-item {
+  background: #112347 !important;
+  color: #ffffff !important;
+  border-color: rgba(201,168,76,0.2) !important;
+}
+
+body.dark-mode p,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .secondary-text {
+  color: rgba(255,255,255,0.6) !important;
+}
+
+#back-to-top:hover {
+  background: rgba(255,255,255,0.38);
+  color: #0D1B3E;
+  border-color: rgba(201,168,76,0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(13,27,62,0.18), 0 0 24px rgba(201,168,76,0.22), inset 0 1px 0 rgba(255,255,255,0.55);
+}
+
 img {
   display: block;
   max-width: 100%;
