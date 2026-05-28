@@ -497,9 +497,644 @@
         flex-direction: column;
       }
     }
+
+    /* Timer and Toggle Layout Styles */
+    .toggle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    @media (max-width: 768px) {
+      .toggle-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .toggle-column {
+        border-left: none !important;
+        padding-left: 0 !important;
+      }
+    }
+    .toggle-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .toggle-column h3 {
+      margin: 0 0 4px;
+      font-size: 1.1rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .radio-label input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      outline: none;
+      background: transparent;
+      display: inline-grid;
+      place-content: center;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+    .radio-label input[type="radio"]::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      transform: scale(0);
+      transition: transform 0.2s ease-in-out;
+      background-color: var(--accent);
+    }
+    .radio-label input[type="radio"]:checked {
+      border-color: var(--accent);
+    }
+    .radio-label input[type="radio"]:checked::before {
+      transform: scale(1);
+    }
+    .date-picker-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+      transition: opacity 0.25s, visibility 0.25s;
+    }
+    .date-picker-wrap.is-hidden {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .date-picker-wrap label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .date-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .date-input:focus {
+      border-color: var(--accent);
+    }
   </style>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, doc, setDoc, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCJ8BelUmuSjVbK0VsfNtJIlM2B9AblNNc",
+      authDomain: "nusp-b4b49.firebaseapp.com",
+      projectId: "nusp-b4b49",
+      storageBucket: "nusp-b4b49.firebasestorage.app",
+      messagingSenderId: "689489197003",
+      appId: "1:689489197003:web:46ea79000f019710f8a84e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // LIVE JOIN REQUESTS
+    onSnapshot(collection(db, "join_requests"), (snapshot) => {
+      const container = document.getElementById('join-requests-container');
+      const countEl = document.getElementById('join-count');
+      countEl.textContent = snapshot.size;
+      container.innerHTML = '';
+      // Store for export
+      window.joinRequestsData = snapshot.docs.map(docSnap => {
+        const d = docSnap.data();
+        const date = d.timestamp ? new Date(d.timestamp.toDate()).toLocaleDateString('en-IN') : 'Just now';
+        return { ...d, _date: date };
+      });
+      
+      snapshot.forEach((docSnap) => {
+        const d = docSnap.data();
+        const date = d.timestamp ?
+          new Date(d.timestamp.toDate()).toLocaleDateString('en-IN') : 'Just now';
+
+        container.innerHTML += `
+          <div class="join-card" style="background:#112347;border-radius:12px;
+          padding:24px;margin-bottom:16px;border-left:3px solid ${d.contacted ? '#22c55e' : '#C9A84C'};opacity:${d.contacted ? 0.75 : 1};">
+            
+            <div style="display:flex;justify-content:space-between;
+            align-items:center;margin-bottom:20px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <label style="
+                  display:flex;align-items:center;gap:8px;
+                  cursor:pointer;user-select:none;">
+                  <input 
+                    type="checkbox"
+                    id="contacted-${docSnap.id}"
+                    onchange="toggleContacted('join_requests', '${docSnap.id}', this)"
+                    ${d.contacted ? 'checked' : ''}
+                    style="
+                      width:18px;height:18px;
+                      accent-color:#22c55e;
+                      cursor:pointer;">
+                  <span style="
+                    font-size:12px;font-weight:600;
+                    color:${d.contacted ? '#22c55e' : 'rgba(255,255,255,0.4)'};
+                    letter-spacing:0.5px;
+                    transition:color 0.2s;">
+                    ${d.contacted ? 'CONTACTED ✓' : 'NOT CONTACTED'}
+                  </span>
+                </label>
+                <span style="font-size:18px;font-weight:700;color:#fff;">
+                  ${d.fullName}</span>
+                <span style="background:rgba(201,168,76,0.15);color:#C9A84C;
+                font-size:12px;padding:4px 10px;border-radius:20px;">${date}</span>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button onclick="editCard('join_requests', '${docSnap.id}', this)"
+                  style="background:rgba(96,165,250,0.15);color:#60a5fa;
+                  border:1px solid rgba(96,165,250,0.3);border-radius:8px;
+                  padding:6px 14px;font-size:12px;cursor:pointer;
+                  font-family:'Inter',sans-serif;font-weight:600;">
+                  ✏️ Edit
+                </button>
+                <button onclick="deleteCard('join_requests', '${docSnap.id}')"
+                  style="background:rgba(239,68,68,0.15);color:#ef4444;
+                  border:1px solid rgba(239,68,68,0.3);border-radius:8px;
+                  padding:6px 14px;font-size:12px;cursor:pointer;
+                  font-family:'Inter',sans-serif;font-weight:600;">
+                  🗑 Delete
+                </button>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div>
+                <p style="font-size:10px;color:rgba(255,255,255,0.4);
+                text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Age</p>
+                <p class="editable-value" data-field="age"
+                style="color:#fff;font-size:15px;">${d.age}</p>
+              </div>
+              <div>
+                <p style="font-size:10px;color:rgba(255,255,255,0.4);
+                text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">
+                Occupation</p>
+                <p class="editable-value" data-field="occupation"
+                style="color:#fff;font-size:15px;">${d.occupation}</p>
+              </div>
+              <div>
+                <p style="font-size:10px;color:rgba(255,255,255,0.4);
+                text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">
+                Mobile</p>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <p class="editable-value" data-field="mobile"
+                  style="color:#fff;font-size:15px;margin:0;">${d.mobile}</p>
+                  <a href="https://wa.me/91${d.mobile.replace(/\D/g,'')}" 
+                    target="_blank"
+                    title="Chat on WhatsApp"
+                    style="
+                      display:flex;align-items:center;justify-content:center;
+                      width:32px;height:32px;border-radius:8px;
+                      background:#25D366;text-decoration:none;
+                      flex-shrink:0;transition:all 0.2s;"
+                    onmouseover="this.style.transform='scale(1.1)'"
+                    onmouseout="this.style.transform='scale(1)'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15
+                      -.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475
+                      -.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52
+                      .149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207
+                      -.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372
+                      -.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 
+                      5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 
+                      1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 
+                      7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 
+                      9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 
+                      9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 
+                      0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 
+                      11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 
+                      00-3.48-8.413z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+              <div>
+                <p style="font-size:10px;color:rgba(255,255,255,0.4);
+                text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">
+                Email</p>
+                <p class="editable-value" data-field="email"
+                style="color:#fff;font-size:15px;">${d.email}</p>
+              </div>
+              <div style="grid-column:span 2;">
+                <p style="font-size:10px;color:rgba(255,255,255,0.4);
+                text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">
+                Heard From</p>
+                <p class="editable-value" data-field="heardFrom"
+                style="color:#fff;font-size:15px;">
+                ${d.heardFrom || 'Not specified'}</p>
+              </div>
+            </div>
+          </div>`;
+      });
+
+      if (snapshot.size === 0) {
+        container.innerHTML = 
+          '<p style="opacity:0.5;text-align:center;padding:40px;">No join requests yet.</p>';
+      }
+
+      // Re-trigger search filter on snapshot load if there's any search input
+      const joinSearchInput = document.getElementById('join-search');
+      if (joinSearchInput && joinSearchInput.value) {
+        joinSearchInput.dispatchEvent(new Event('input'));
+      }
+    });
+
+    // LIVE YUVAAD REGISTRATIONS
+    onSnapshot(collection(db, "yuvaad_registrations"), (snapshot) => {
+      const container = document.getElementById('yuvaad-registrations-container');
+      const countEl = document.getElementById('yuvaad-count');
+      countEl.textContent = snapshot.size;
+      container.innerHTML = '';
+      // Store for export
+      window.yuvaadData = snapshot.docs.map(docSnap => {
+        const d = docSnap.data();
+        const date = d.timestamp ? new Date(d.timestamp.toDate()).toLocaleDateString('en-IN') : 'Just now';
+        return { ...d, _date: date };
+      });
+
+      snapshot.forEach((docSnap) => {
+        const d = docSnap.data();
+        const date = d.timestamp ? 
+          new Date(d.timestamp.toDate()).toLocaleDateString('en-IN') : 'Just now';
+        
+        container.innerHTML += `
+          <div class="yuvaad-card" style="background:#112347;border-radius:12px;padding:24px;
+          margin-bottom:16px;border-left:3px solid ${d.contacted ? '#22c55e' : '#C9A84C'};opacity:${d.contacted ? 0.75 : 1};">
+            <div style="display:flex;justify-content:space-between;
+            align-items:center;margin-bottom:16px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <label style="
+                  display:flex;align-items:center;gap:8px;
+                  cursor:pointer;user-select:none;">
+                  <input 
+                    type="checkbox"
+                    id="contacted-${docSnap.id}"
+                    onchange="toggleContacted('yuvaad_registrations', '${docSnap.id}', this)"
+                    ${d.contacted ? 'checked' : ''}
+                    style="
+                      width:18px;height:18px;
+                      accent-color:#22c55e;
+                      cursor:pointer;">
+                  <span style="
+                    font-size:12px;font-weight:600;
+                    color:${d.contacted ? '#22c55e' : 'rgba(255,255,255,0.4)'};
+                    letter-spacing:0.5px;
+                    transition:color 0.2s;">
+                    ${d.contacted ? 'CONTACTED ✓' : 'NOT CONTACTED'}
+                  </span>
+                </label>
+                <span class="editable-value" data-field="fullName" style="font-size:18px;font-weight:700;color:#fff;">
+                  ${d.fullName}</span>
+                <span style="background:rgba(201,168,76,0.15);color:#C9A84C;
+                font-size:12px;padding:4px 10px;border-radius:20px;">${date}</span>
+              </div>
+              <div style="display:flex;align-items:center;">
+                <button onclick="editCard('yuvaad_registrations', '${docSnap.id}', this)"
+                  style="background:rgba(96,165,250,0.15);color:#60a5fa;
+                  border:1px solid rgba(96,165,250,0.3);border-radius:8px;
+                  padding:6px 12px;font-size:12px;cursor:pointer;
+                  font-family:'Inter',sans-serif;font-weight:600;
+                  margin-right:8px;transition:all 0.2s;"
+                  onmouseover="this.style.background='rgba(96,165,250,0.3)'"
+                  onmouseout="this.style.background='rgba(96,165,250,0.15)'">
+                  ✏️ Edit
+                </button>
+                <button onclick="deleteCard('yuvaad_registrations', '${docSnap.id}')" 
+                  style="background:rgba(239,68,68,0.15);color:#ef4444;
+                  border:1px solid rgba(239,68,68,0.3);border-radius:8px;
+                  padding:6px 12px;font-size:12px;cursor:pointer;
+                  font-family:'Inter',sans-serif;font-weight:600;
+                  transition:all 0.2s;"
+                  onmouseover="this.style.background='rgba(239,68,68,0.3)'"
+                  onmouseout="this.style.background='rgba(239,68,68,0.15)'">
+                  🗑 Delete
+                </button>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div><p style="font-size:10px;color:rgba(255,255,255,0.4);
+              text-transform:uppercase;letter-spacing:1px;">Age</p>
+              <p class="editable-value" data-field="age" style="color:#fff;margin-top:2px;">${d.age}</p></div>
+              <div><p style="font-size:10px;color:rgba(255,255,255,0.4);
+              text-transform:uppercase;letter-spacing:1px;">Institution</p>
+              <p class="editable-value" data-field="institution" style="color:#fff;margin-top:2px;">${d.institution}</p></div>
+              <div><p style="font-size:10px;color:rgba(255,255,255,0.4);
+              text-transform:uppercase;letter-spacing:1px;">Occupation</p>
+              <p class="editable-value" data-field="occupation" style="color:#fff;margin-top:2px;">${d.occupation}</p></div>
+              <div>
+                <p style="font-size:10px;color:rgba(255,255,255,0.4);
+                text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">
+                Mobile</p>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <p class="editable-value" data-field="mobile"
+                  style="color:#fff;font-size:15px;margin:0;">${d.mobile}</p>
+                  <a href="https://wa.me/91${d.mobile.replace(/\D/g,'')}" 
+                    target="_blank"
+                    title="Chat on WhatsApp"
+                    style="
+                      display:flex;align-items:center;justify-content:center;
+                      width:32px;height:32px;border-radius:8px;
+                      background:#25D366;text-decoration:none;
+                      flex-shrink:0;transition:all 0.2s;"
+                    onmouseover="this.style.transform='scale(1.1)'"
+                    onmouseout="this.style.transform='scale(1)'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15
+                      -.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475
+                      -.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52
+                      .149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207
+                      -.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372
+                      -.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 
+                      5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 
+                      1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 
+                      7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 
+                      9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 
+                      9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 
+                      0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 
+                      11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 
+                      00-3.48-8.413z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+              <div><p style="font-size:10px;color:rgba(255,255,255,0.4);
+              text-transform:uppercase;letter-spacing:1px;">Email</p>
+              <p class="editable-value" data-field="email" style="color:#fff;margin-top:2px;">${d.email}</p></div>
+              <div><p style="font-size:10px;color:rgba(255,255,255,0.4);
+              text-transform:uppercase;letter-spacing:1px;">City</p>
+              <p class="editable-value" data-field="city" style="color:#fff;margin-top:2px;">${d.city}</p></div>
+              <div style="grid-column:span 2;">
+              <p style="font-size:10px;color:rgba(255,255,255,0.4);
+              text-transform:uppercase;letter-spacing:1px;">Why Join</p>
+              <p class="editable-value" data-field="whyJoin" style="color:#fff;margin-top:2px;">${d.whyJoin}</p></div>
+              <div><p style="font-size:10px;color:rgba(255,255,255,0.4);
+              text-transform:uppercase;letter-spacing:1px;">Heard From</p>
+              <p class="editable-value" data-field="heardFrom" style="color:#fff;margin-top:2px;">${d.heardFrom || 'Not specified'}</p></div>
+            </div>
+          </div>`;
+      });
+
+      if (snapshot.size === 0) {
+        container.innerHTML = '<p style="opacity:0.5;text-align:center;">No registrations yet.</p>';
+      }
+
+      // Re-trigger search filter on snapshot load if there's any search input
+      const yuvaadSearchInput = document.getElementById('yuvaad-search');
+      if (yuvaadSearchInput && yuvaadSearchInput.value) {
+        yuvaadSearchInput.dispatchEvent(new Event('input'));
+      }
+    });
+
+    // REGISTRATION TOGGLE
+    const settingsRef = doc(db, "settings", "yuvaad");
+
+    onSnapshot(settingsRef, (docSnap) => {
+      const toggle = document.getElementById('registration-toggle');
+      const statusLabel = document.getElementById('registration-status');
+      if (docSnap.exists()) {
+        const isOpen = docSnap.data().registrationsOpen;
+        toggle.checked = isOpen;
+        statusLabel.textContent = isOpen ? 'OPEN' : 'CLOSED';
+        statusLabel.style.color = isOpen ? '#22c55e' : '#ef4444';
+        if (typeof window.updateStatusLabels === 'function') {
+          window.updateStatusLabels();
+        }
+      }
+    });
+
+    document.getElementById('registration-toggle').addEventListener('change', async (e) => {
+      await setDoc(settingsRef, {
+        registrationsOpen: e.target.checked,
+        updatedAt: serverTimestamp()
+      });
+    });
+
+    // COUNTDOWN TIMER SETTER
+    document.querySelectorAll('input[name="timerMode"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const wrapper = document.getElementById('date-input-wrapper');
+        wrapper.style.display = e.target.value === 'countdown' ? 'block' : 'none';
+      });
+    });
+
+    // Set initial display of date-input-wrapper
+    const initialModeRadio = document.querySelector('input[name="timerMode"]:checked');
+    const dateInputWrapper = document.getElementById('date-input-wrapper');
+    if (dateInputWrapper) {
+      dateInputWrapper.style.display = (initialModeRadio && initialModeRadio.value === 'countdown') ? 'block' : 'none';
+    }
+
+    document.getElementById('set-timer-btn').addEventListener('click', async () => {
+      const selectedRadio = document.querySelector('input[name="timerMode"]:checked');
+      if (!selectedRadio) {
+        alert('Please select a mode first.');
+        return;
+      }
+
+      const selectedMode = selectedRadio.value;
+      const payload = {
+        timerMode: selectedMode,
+        updatedAt: serverTimestamp()
+      };
+
+      if (selectedMode === 'countdown') {
+        const dateValue = document.getElementById('timer-input').value;
+        if (!dateValue) {
+          alert('Please select a date and time.');
+          return;
+        }
+        payload.targetDate = dateValue;
+      }
+
+      try {
+        await setDoc(doc(db, "settings", "countdown"), payload);
+        alert('Saved! Main page will update instantly.');
+      } catch (error) {
+        alert('Error saving. Try again.');
+        console.error(error);
+      }
+    });
+
+    // GLOBAL TOGGLE CONTACTED FUNCTION
+    window.toggleContacted = async (collectionName, docId, checkbox) => {
+      const isContacted = checkbox.checked;
+      const label = checkbox.nextElementSibling;
+      
+      try {
+        await updateDoc(doc(db, collectionName, docId), {
+          contacted: isContacted
+        });
+
+        label.textContent = isContacted ? 'CONTACTED ✓' : 'NOT CONTACTED';
+        label.style.color = isContacted ? '#22c55e' : 'rgba(255,255,255,0.4)';
+
+        const card = checkbox.closest('.join-card, .yuvaad-card');
+        card.style.borderLeftColor = isContacted ? '#22c55e' : '#C9A84C';
+        card.style.opacity = isContacted ? '0.75' : '1';
+
+      } catch (error) {
+        alert('Error updating status. Try again.');
+        checkbox.checked = !isContacted;
+        console.error(error);
+      }
+    };
+
+    // GLOBAL DELETE CARD FUNCTION
+    window.deleteCard = async (collectionName, docId) => {
+      const confirmed = confirm(
+        'Are you sure you want to delete this entry? This cannot be undone.');
+      if (!confirmed) return;
+      
+      try {
+        await deleteDoc(doc(db, collectionName, docId));
+      } catch (error) {
+        alert('Error deleting. Please try again.');
+        console.error(error);
+      }
+    };
+
+    // GLOBAL EDIT CARD FUNCTION
+    window.editCard = async (collectionName, docId, btnEl) => {
+      const card = btnEl.closest('.join-card, .yuvaad-card');
+      const valueEls = card.querySelectorAll('.editable-value');
+      const isEditing = card.dataset.editing === 'true';
+
+      if (!isEditing) {
+        // Switch to edit mode
+        card.dataset.editing = 'true';
+        btnEl.textContent = '💾 Save';
+        btnEl.style.color = '#4ade80';
+        btnEl.style.borderColor = 'rgba(74,222,128,0.3)';
+        btnEl.style.background = 'rgba(74,222,128,0.15)';
+
+        valueEls.forEach(el => {
+          const currentVal = el.textContent;
+          const field = el.dataset.field;
+          el.innerHTML = `
+            <input 
+              type="text" 
+              value="${currentVal.trim()}"
+              data-field="${field}"
+              style="background:#0d1b3e;border:1px solid rgba(201,168,76,0.4);
+              border-radius:6px;padding:6px 10px;color:#fff;
+              font-size:14px;width:100%;font-family:'Inter',sans-serif;"
+            />`;
+        });
+      } else {
+        // Save changes
+        card.dataset.editing = 'false';
+        btnEl.textContent = '✏️ Edit';
+        btnEl.style.color = '#60a5fa';
+        btnEl.style.borderColor = 'rgba(96,165,250,0.3)';
+        btnEl.style.background = 'rgba(96,165,250,0.15)';
+
+        const updates = {};
+        card.querySelectorAll('input[data-field]').forEach(input => {
+          updates[input.dataset.field] = input.value;
+          input.parentElement.textContent = input.value;
+        });
+
+        try {
+          await updateDoc(doc(db, collectionName, docId), updates);
+        } catch (error) {
+          alert('Error saving changes.');
+          console.error(error);
+        }
+      }
+    };
+
+    // SEARCH BAR EVENT LISTENERS
+    document.getElementById('join-search').addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      document.querySelectorAll('.join-card').forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(query) ? 'block' : 'none';
+      });
+    });
+
+    document.getElementById('yuvaad-search').addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      document.querySelectorAll('.yuvaad-card').forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(query) ? 'block' : 'none';
+      });
+    });
+  </script>
 </head>
 <body>
+<div id="password-screen" style="
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:#060d1e;z-index:99999;
+  display:flex;align-items:center;justify-content:center;">
+  
+  <div style="text-align:center;max-width:380px;width:90%;">
+    
+    <div style="width:72px;height:72px;border-radius:50%;
+    border:2px solid #C9A84C;margin:0 auto 24px;
+    display:flex;align-items:center;justify-content:center;">
+      <img src="../528574843_17847690624537071_7871074800796948845_n.jpg" 
+        style="width:60px;height:60px;border-radius:50%;object-fit:cover;">
+    </div>
+
+    <h2 style="color:#fff;font-family:'Playfair Display',serif;
+    font-size:24px;margin-bottom:8px;">Admin Access</h2>
+    <p style="color:rgba(255,255,255,0.4);font-size:14px;
+    margin-bottom:32px;">SF NUSP Admin Panel</p>
+
+    <input 
+      type="password" 
+      id="admin-password-input"
+      placeholder="Enter password"
+      style="width:100%;padding:14px 18px;border-radius:10px;
+      border:1px solid rgba(201,168,76,0.3);background:#112347;
+      color:#fff;font-size:15px;font-family:'Inter',sans-serif;
+      outline:none;margin-bottom:12px;box-sizing:border-box;"
+    />
+
+    <p id="password-error" style="color:#ef4444;font-size:13px;
+    margin-bottom:12px;display:none;">
+      Incorrect password. Try again.
+    </p>
+
+    <button id="password-submit"
+      style="width:100%;padding:14px;border-radius:10px;
+      background:#C9A84C;color:#0d1b3e;font-weight:700;
+      font-size:15px;border:none;cursor:pointer;
+      font-family:'Inter',sans-serif;letter-spacing:0.5px;">
+      Enter Dashboard →
+    </button>
+
+    <p style="color:rgba(255,255,255,0.2);font-size:11px;margin-top:24px;">
+      © 2025 SF NUSP. Authorized access only.
+    </p>
+  </div>
+</div>
+
   <div class="mobile-topbar">
     <div class="mobile-brand">
       <span class="logo-mark">
@@ -556,11 +1191,11 @@
           <div class="summary-grid">
             <article class="card">
               <div class="card-label">Total Join Requests</div>
-              <div class="card-value">0</div>
+              <div class="card-value" id="join-count">0</div>
             </article>
             <article class="card">
               <div class="card-label">Yuvaad Registrations</div>
-              <div class="card-value">0</div>
+              <div class="card-value" id="yuvaad-count">0</div>
             </article>
             <article class="card">
               <div class="card-label">Registrations Status</div>
@@ -582,7 +1217,49 @@
             <p>People who want to join SF NUSP</p>
           </header>
 
-          <div class="data-stack">
+          <div style="margin-bottom:20px;">
+            <input 
+              type="text" 
+              id="join-search" 
+              placeholder="Search by name, email or mobile..."
+              style="width:100%;padding:12px 16px;border-radius:10px;
+              border:1px solid rgba(201,168,76,0.3);
+              background:#112347;color:#fff;font-size:14px;
+              outline:none;font-family:'Inter',sans-serif;"
+            />
+          </div>
+
+          <!-- Export Buttons - Join Requests -->
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap;">
+            <span style="color:rgba(255,255,255,0.45);font-size:12px;font-weight:600;
+            letter-spacing:0.5px;text-transform:uppercase;">Export:</span>
+            <button onclick="exportCSV('join')"
+              style="display:flex;align-items:center;gap:6px;
+              background:rgba(74,222,128,0.1);color:#4ade80;
+              border:1px solid rgba(74,222,128,0.3);border-radius:8px;
+              padding:7px 16px;font-size:13px;cursor:pointer;
+              font-family:'Inter',sans-serif;font-weight:600;transition:all 0.2s;"
+              onmouseover="this.style.background='rgba(74,222,128,0.22)'"
+              onmouseout="this.style.background='rgba(74,222,128,0.1)'">&#x1F4CA; CSV / Excel</button>
+            <button onclick="exportPDF('join')"
+              style="display:flex;align-items:center;gap:6px;
+              background:rgba(96,165,250,0.1);color:#60a5fa;
+              border:1px solid rgba(96,165,250,0.3);border-radius:8px;
+              padding:7px 16px;font-size:13px;cursor:pointer;
+              font-family:'Inter',sans-serif;font-weight:600;transition:all 0.2s;"
+              onmouseover="this.style.background='rgba(96,165,250,0.22)'"
+              onmouseout="this.style.background='rgba(96,165,250,0.1)'">&#x1F4C4; PDF</button>
+            <button onclick="exportWord('join')"
+              style="display:flex;align-items:center;gap:6px;
+              background:rgba(167,139,250,0.1);color:#a78bfa;
+              border:1px solid rgba(167,139,250,0.3);border-radius:8px;
+              padding:7px 16px;font-size:13px;cursor:pointer;
+              font-family:'Inter',sans-serif;font-weight:600;transition:all 0.2s;"
+              onmouseover="this.style.background='rgba(167,139,250,0.22)'"
+              onmouseout="this.style.background='rgba(167,139,250,0.1)'">&#x1F4DD; Word</button>
+          </div>
+
+          <div class="data-stack" id="join-requests-container">
             <article class="data-card">
               <div class="data-top">
                 <strong>Rahul Sharma</strong>
@@ -678,18 +1355,114 @@
           </header>
 
           <section class="toggle-panel">
-            <div class="toggle-row">
-              <strong>Registration Status:</strong>
-              <label class="switch" aria-label="Toggle registration status">
-                <input id="registration-toggle" type="checkbox" checked>
-                <span class="slider"></span>
-              </label>
-              <span class="status-open" data-status-label>Open</span>
+            <div class="toggle-grid">
+              <!-- Left Column: Registration Toggle -->
+              <div class="toggle-column">
+                <h3>Registration Status</h3>
+                <div class="toggle-row" style="margin-top: 8px;">
+                  <strong>Status Toggle:</strong>
+                  <label class="switch" aria-label="Toggle registration status">
+                    <input id="registration-toggle" type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                  <span class="status-open" data-status-label id="registration-status">Open</span>
+                </div>
+                <p class="toggle-note" style="margin-top: 8px;">When OFF, the registration page will show "Registrations Closed" to users.</p>
+              </div>
+
+              <!-- Right Column: Timer Configuration -->
+              <div class="toggle-column" style="border-left: 1px solid var(--border); padding-left: 32px;">
+                <div style="padding:24px;">
+                  <h3 style="color:#C9A84C;font-size:11px;letter-spacing:2px;
+                  text-transform:uppercase;margin-bottom:20px;">TIMER CONFIGURATION</h3>
+                  
+                  <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px;">
+                    <label style="display:flex;align-items:center;gap:10px;
+                    cursor:pointer;color:#fff;font-size:14px;">
+                      <input type="radio" name="timerMode" value="closed" id="mode-closed"
+                        style="accent-color:#C9A84C;width:16px;height:16px;">
+                      Registration Closed
+                    </label>
+                    <label style="display:flex;align-items:center;gap:10px;
+                    cursor:pointer;color:#fff;font-size:14px;">
+                      <input type="radio" name="timerMode" value="soon" id="mode-soon"
+                        style="accent-color:#C9A84C;width:16px;height:16px;">
+                      Date Reveal Soon
+                    </label>
+                    <label style="display:flex;align-items:center;gap:10px;
+                    cursor:pointer;color:#fff;font-size:14px;">
+                      <input type="radio" name="timerMode" value="countdown" id="mode-countdown"
+                        style="accent-color:#C9A84C;width:16px;height:16px;">
+                      Actual Date (Timer)
+                    </label>
+                  </div>
+
+                  <div id="date-input-wrapper" style="display:none;margin-bottom:16px;">
+                    <p style="font-size:11px;color:rgba(255,255,255,0.4);
+                    letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">
+                      SELECT TARGET DATE & TIME:
+                    </p>
+                    <input type="datetime-local" id="timer-input"
+                      style="width:100%;padding:10px 14px;border-radius:8px;
+                      border:1px solid rgba(201,168,76,0.3);background:#0d1b3e;
+                      color:#fff;font-size:14px;font-family:'Inter',sans-serif;">
+                  </div>
+
+                  <button id="set-timer-btn"
+                    style="width:100%;padding:12px;border-radius:8px;
+                    background:#C9A84C;color:#0d1b3e;font-weight:700;
+                    font-size:14px;border:none;cursor:pointer;
+                    font-family:'Inter',sans-serif;letter-spacing:0.5px;">
+                    Save Timer Configuration
+                  </button>
+                </div>
+              </div>
             </div>
-            <p class="toggle-note">When OFF, the registration page will show "Registrations Closed" to users. (Firebase connection coming soon)</p>
           </section>
 
-          <div class="data-stack">
+          <div style="margin-bottom:20px;">
+            <input 
+              type="text" 
+              id="yuvaad-search" 
+              placeholder="Search by name, email or mobile..."
+              style="width:100%;padding:12px 16px;border-radius:10px;
+              border:1px solid rgba(201,168,76,0.3);
+              background:#112347;color:#fff;font-size:14px;
+              outline:none;font-family:'Inter',sans-serif;"
+            />
+          </div>
+
+          <!-- Export Buttons - Yuvaad Registrations -->
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap;">
+            <span style="color:rgba(255,255,255,0.45);font-size:12px;font-weight:600;
+            letter-spacing:0.5px;text-transform:uppercase;">Export:</span>
+            <button onclick="exportCSV('yuvaad')"
+              style="display:flex;align-items:center;gap:6px;
+              background:rgba(74,222,128,0.1);color:#4ade80;
+              border:1px solid rgba(74,222,128,0.3);border-radius:8px;
+              padding:7px 16px;font-size:13px;cursor:pointer;
+              font-family:'Inter',sans-serif;font-weight:600;transition:all 0.2s;"
+              onmouseover="this.style.background='rgba(74,222,128,0.22)'"
+              onmouseout="this.style.background='rgba(74,222,128,0.1)'">&#x1F4CA; CSV / Excel</button>
+            <button onclick="exportPDF('yuvaad')"
+              style="display:flex;align-items:center;gap:6px;
+              background:rgba(96,165,250,0.1);color:#60a5fa;
+              border:1px solid rgba(96,165,250,0.3);border-radius:8px;
+              padding:7px 16px;font-size:13px;cursor:pointer;
+              font-family:'Inter',sans-serif;font-weight:600;transition:all 0.2s;"
+              onmouseover="this.style.background='rgba(96,165,250,0.22)'"
+              onmouseout="this.style.background='rgba(96,165,250,0.1)'">&#x1F4C4; PDF</button>
+            <button onclick="exportWord('yuvaad')"
+              style="display:flex;align-items:center;gap:6px;
+              background:rgba(167,139,250,0.1);color:#a78bfa;
+              border:1px solid rgba(167,139,250,0.3);border-radius:8px;
+              padding:7px 16px;font-size:13px;cursor:pointer;
+              font-family:'Inter',sans-serif;font-weight:600;transition:all 0.2s;"
+              onmouseover="this.style.background='rgba(167,139,250,0.22)'"
+              onmouseout="this.style.background='rgba(167,139,250,0.1)'">&#x1F4DD; Word</button>
+          </div>
+
+          <div class="data-stack" id="yuvaad-registrations-container">
             <article class="data-card">
               <div class="data-top">
                 <strong>Sneha Kulkarni</strong>
@@ -790,6 +1563,209 @@
   </div>
 
   <script>
+    // ─── EXPORT FUNCTIONS ─────────────────────────────────────────────────────
+
+    // Helper: escape a cell value for CSV
+    function csvCell(val) {
+      return '"' + String(val == null ? '' : val).replace(/"/g, '""').replace(/\n/g, ' ') + '"';
+    }
+
+    // Helper: build table rows HTML for PDF/Word
+    function buildTableHTML(headers, rows, accentColor) {
+      const thead = '<tr>' + headers.map(h => '<th>' + h + '</th>').join('') + '</tr>';
+      const tbody = rows.map(function(row) {
+        return '<tr>' + row.map(function(cell) { return '<td>' + (cell == null ? '' : cell) + '</td>'; }).join('') + '</tr>';
+      }).join('');
+      return { thead: thead, tbody: tbody };
+    }
+
+    // ── CSV / EXCEL EXPORT ────────────────────────────────────────────────────
+    window.exportCSV = function(type) {
+      var data = type === 'join' ? (window.joinRequestsData || []) : (window.yuvaadData || []);
+      var filename = type === 'join' ? 'SFNUSP_Join_Requests' : 'SFNUSP_Yuvaad_Registrations';
+
+      if (data.length === 0) {
+        alert('No records loaded yet. Please wait for data to load and try again.');
+        return;
+      }
+
+      var headers, rows;
+      if (type === 'join') {
+        headers = ['Name', 'Mobile', 'Email', 'Age', 'Occupation', 'Heard From', 'Date'];
+        rows = data.map(function(d) {
+          return [d.fullName, d.mobile, d.email, d.age, d.occupation, d.heardFrom, d._date];
+        });
+      } else {
+        headers = ['Name', 'Mobile', 'Email', 'Age', 'Institution', 'Occupation', 'City', 'Why Join', 'Heard From', 'Date'];
+        rows = data.map(function(d) {
+          return [d.fullName, d.mobile, d.email, d.age, d.institution, d.occupation, d.city, d.whyJoin, d.heardFrom, d._date];
+        });
+      }
+
+      var csv = [headers.map(csvCell).join(',')];
+      rows.forEach(function(row) { csv.push(row.map(csvCell).join(',')); });
+
+      var blob = new Blob(['\uFEFF' + csv.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename + '_' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    // ── PDF EXPORT (print window) ─────────────────────────────────────────────
+    window.exportPDF = function(type) {
+      var data = type === 'join' ? (window.joinRequestsData || []) : (window.yuvaadData || []);
+      var title = type === 'join' ? 'SF NUSP \u2014 Join Requests' : 'SF NUSP \u2014 Yuvaad Registrations';
+
+      if (data.length === 0) {
+        alert('No records loaded yet. Please wait for data to load and try again.');
+        return;
+      }
+
+      var headers, rows;
+      if (type === 'join') {
+        headers = ['#', 'Full Name', 'Mobile', 'Email', 'Age', 'Occupation', 'Heard From', 'Date'];
+        rows = data.map(function(d, i) {
+          return [i + 1, d.fullName || '\u2014', d.mobile || '\u2014', d.email || '\u2014',
+                  d.age || '\u2014', d.occupation || '\u2014', d.heardFrom || '\u2014', d._date || '\u2014'];
+        });
+      } else {
+        headers = ['#', 'Full Name', 'Mobile', 'Email', 'Age', 'Institution', 'City', 'Heard From', 'Date'];
+        rows = data.map(function(d, i) {
+          return [i + 1, d.fullName || '\u2014', d.mobile || '\u2014', d.email || '\u2014',
+                  d.age || '\u2014', d.institution || '\u2014', d.city || '\u2014', d.heardFrom || '\u2014', d._date || '\u2014'];
+        });
+      }
+
+      var t = buildTableHTML(headers, rows);
+      var printDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+
+      var win = window.open('', '_blank', 'width=1050,height=720');
+      win.document.write(
+        '<!DOCTYPE html><html><head><title>' + title + '</title><meta charset="UTF-8"><style>' +
+        'body{font-family:Arial,sans-serif;font-size:11.5px;margin:28px;color:#111;}' +
+        '.hdr{display:flex;align-items:flex-start;justify-content:space-between;' +
+          'border-bottom:2px solid #0d1b3e;padding-bottom:14px;margin-bottom:16px;}' +
+        '.hdr h1{color:#0d1b3e;font-size:19px;margin:0 0 4px;letter-spacing:-0.3px;}' +
+        '.hdr p{margin:0;color:#888;font-size:11px;}' +
+        '.meta{text-align:right;font-size:11px;color:#555;}' +
+        '.meta strong{color:#c9a84c;font-size:13px;}' +
+        'table{width:100%;border-collapse:collapse;}' +
+        'th{background:#0d1b3e;color:#c9a84c;padding:9px 10px;text-align:left;font-size:10.5px;letter-spacing:0.4px;}' +
+        'td{padding:8px 10px;border-bottom:1px solid #eee;font-size:11px;vertical-align:top;}' +
+        'tr:nth-child(even) td{background:#f5f5f5;}' +
+        '.foot{margin-top:16px;font-size:10px;color:#bbb;text-align:center;border-top:1px solid #eee;padding-top:10px;}' +
+        '@media print{body{margin:10px;}@page{margin:12mm;size:A4 landscape;}}' +
+        '</style></head><body>' +
+        '<div class="hdr"><div><h1>' + title + '</h1><p>Confidential &mdash; SF NUSP Admin</p></div>' +
+        '<div class="meta">Exported on <strong>' + printDate + '</strong><br>Total: <strong>' + data.length + '</strong> records</div></div>' +
+        '<table><thead>' + t.thead + '</thead><tbody>' + t.tbody + '</tbody></table>' +
+        '<div class="foot">SF NUSP Admin Panel &mdash; Confidential. Do not distribute.</div>' +
+        '</body></html>'
+      );
+      win.document.close();
+      win.focus();
+      setTimeout(function() { win.print(); }, 450);
+    };
+
+    // ── WORD (.doc) EXPORT ────────────────────────────────────────────────────
+    window.exportWord = function(type) {
+      var data = type === 'join' ? (window.joinRequestsData || []) : (window.yuvaadData || []);
+      var title = type === 'join' ? 'SF NUSP \u2014 Join Requests' : 'SF NUSP \u2014 Yuvaad Registrations';
+      var filename = type === 'join' ? 'SFNUSP_Join_Requests' : 'SFNUSP_Yuvaad_Registrations';
+
+      if (data.length === 0) {
+        alert('No records loaded yet. Please wait for data to load and try again.');
+        return;
+      }
+
+      var headers, rows;
+      if (type === 'join') {
+        headers = ['#', 'Full Name', 'Mobile', 'Email', 'Age', 'Occupation', 'Heard From', 'Date'];
+        rows = data.map(function(d, i) {
+          return [i + 1, d.fullName || '', d.mobile || '', d.email || '',
+                  d.age || '', d.occupation || '', d.heardFrom || '', d._date || ''];
+        });
+      } else {
+        headers = ['#', 'Full Name', 'Mobile', 'Email', 'Age', 'Institution', 'City', 'Heard From', 'Date'];
+        rows = data.map(function(d, i) {
+          return [i + 1, d.fullName || '', d.mobile || '', d.email || '',
+                  d.age || '', d.institution || '', d.city || '', d.heardFrom || '', d._date || ''];
+        });
+      }
+
+      var t = buildTableHTML(headers, rows);
+      var printDate = new Date().toLocaleDateString('en-IN');
+
+      var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+        'xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+        '<head><meta charset="UTF-8"><style>' +
+        'body{font-family:Calibri,Arial,sans-serif;font-size:11pt;margin:1cm;}' +
+        'h1{color:#0d1b3e;font-size:16pt;margin-bottom:4px;}' +
+        'p.sub{font-size:9pt;color:#888;margin-bottom:14px;}' +
+        'table{width:100%;border-collapse:collapse;}' +
+        'th{background:#0d1b3e;color:#c9a84c;padding:7pt 8pt;text-align:left;font-size:9pt;}' +
+        'td{padding:6pt 8pt;border:1px solid #ddd;font-size:9.5pt;}' +
+        'tr:nth-child(even) td{background:#f5f5f5;}' +
+        '</style></head><body>' +
+        '<h1>' + title + '</h1>' +
+        '<p class="sub">Exported on ' + printDate + ' &nbsp;&bull;&nbsp; ' + data.length + ' records &nbsp;&bull;&nbsp; SF NUSP Admin</p>' +
+        '<table><thead>' + t.thead + '</thead><tbody>' + t.tbody + '</tbody></table>' +
+        '</body></html>';
+
+      var blob = new Blob([html], { type: 'application/msword' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename + '_' + new Date().toISOString().slice(0, 10) + '.doc';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    // ─────────────────────────────────────────────────────────────────────────
+
+    const ADMIN_PASSWORD = '@nusp';
+
+    document.getElementById('password-submit').addEventListener('click', () => {
+      checkPassword();
+    });
+
+    document.getElementById('admin-password-input')
+    .addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') checkPassword();
+    });
+
+    function checkPassword() {
+      const input = document.getElementById('admin-password-input').value;
+      const error = document.getElementById('password-error');
+      
+      if (input === ADMIN_PASSWORD) {
+        document.getElementById('password-screen').style.display = 'none';
+        sessionStorage.setItem('nusp_admin', 'true');
+      } else {
+        error.style.display = 'block';
+        document.getElementById('admin-password-input').value = '';
+        document.getElementById('admin-password-input').focus();
+        
+        // Shake animation
+        const btn = document.getElementById('password-submit');
+        btn.style.transform = 'translateX(-8px)';
+        setTimeout(() => btn.style.transform = 'translateX(8px)', 100);
+        setTimeout(() => btn.style.transform = 'translateX(0)', 200);
+      }
+    }
+
+    // Auto bypass if already authenticated in this session
+    if (sessionStorage.getItem('nusp_admin') === 'true') {
+      document.getElementById('password-screen').style.display = 'none';
+    }
+
     const REGISTRATION_STATE_KEY = "sf_nusp_registrations_open";
     const menuButton = document.querySelector(".menu-button");
     const sidebar = document.querySelector(".sidebar");
@@ -865,6 +1841,81 @@
       });
       updateStatusLabels();
     }
+
+    // ─── Live Timer Admin Control logic ──────────────────────────────────────
+    const EVENT_MODE_KEY = "sf_nusp_event_mode";
+    const EVENT_DATE_KEY = "sf_nusp_event_date";
+
+    const timerRadios = document.querySelectorAll('input[name="timerMode"]');
+    const datePickerContainer = document.getElementById("date-input-wrapper");
+    const eventDateInput = document.getElementById("timer-input");
+
+    function readEventMode() {
+      try {
+        return window.localStorage.getItem(EVENT_MODE_KEY) || "countdown";
+      } catch {
+        return "countdown";
+      }
+    }
+
+    function writeEventMode(mode) {
+      try {
+        window.localStorage.setItem(EVENT_MODE_KEY, mode);
+      } catch {}
+    }
+
+    function readEventDate() {
+      try {
+        return window.localStorage.getItem(EVENT_DATE_KEY) || "2026-10-17T09:00:00";
+      } catch {
+        return "2026-10-17T09:00:00";
+      }
+    }
+
+    function writeEventDate(dateStr) {
+      try {
+        window.localStorage.setItem(EVENT_DATE_KEY, dateStr);
+      } catch {}
+    }
+
+    // Initialize Timer Controls
+    const currentMode = readEventMode();
+    const currentRadio = document.getElementById(`mode-${currentMode === "date_soon" ? "soon" : currentMode}`);
+    if (currentRadio) {
+      currentRadio.checked = true;
+    }
+    
+    if (eventDateInput) {
+      eventDateInput.value = readEventDate();
+    }
+
+    function updateTimerControlsUI() {
+      const selectedRadio = document.querySelector('input[name="timerMode"]:checked');
+      const mode = selectedRadio ? selectedRadio.value : "countdown";
+      
+      if (datePickerContainer) {
+        if (mode === "countdown") {
+          datePickerContainer.classList.remove("is-hidden");
+        } else {
+          datePickerContainer.classList.add("is-hidden");
+        }
+      }
+    }
+
+    timerRadios.forEach((radio) => {
+      radio.addEventListener("change", () => {
+        writeEventMode(radio.value);
+        updateTimerControlsUI();
+      });
+    });
+
+    if (eventDateInput) {
+      eventDateInput.addEventListener("input", () => {
+        writeEventDate(eventDateInput.value);
+      });
+    }
+
+    updateTimerControlsUI();
   </script>
 </body>
 </html>

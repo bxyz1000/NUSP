@@ -1,62 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SF NUSP | Youth Parliament India: Embrace the Challenge</title>
-  <meta name="description" content="SF NUSP is India's youth parliament organization building the next generation of leaders through debate, democracy and civic action. Join Yuvaad, our flagship youth parliament program.">
-  <meta name="keywords" content="SF NUSP, NUSP, youth parliament India, yuvaad, student parliament, youth leadership India, debate competition India, civic education, Pranay Atkar, Jitender Chug">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://sfnusp.org/">
-  <meta property="og:title" content="SF NUSP | Youth Parliament India">
-  <meta property="og:description" content="SF NUSP is India's youth parliament organization building the next generation of leaders through debate, democracy and civic action. Join Yuvaad, our flagship youth parliament program.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://sfnusp.org/">
-  <meta property="og:image" content="https://sfnusp.org/assets/Adobe%20Express%20-%20file.png">
-  <meta property="og:image:alt" content="SF NUSP logo">
-  <link rel="icon" type="image/png" href="assets/Adobe%20Express%20-%20file.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="page-shell">
-    <header class="site-header">
-      <a class="brand" href="#top" aria-label="SF NUSP home">
-        <span class="brand-mark">
-          <img src="assets/Adobe%20Express%20-%20file.png" alt="SF NUSP logo">
-        </span>
-        <span class="brand-copy">
-          <span class="brand-name">SF NUSP</span>
-          <span class="brand-tag">Youth Parliament India</span>
-        </span>
-      </a>
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-      <nav class="site-nav" id="site-nav" aria-label="Primary navigation">
-        <a href="#top">Home</a>
-        <a href="#impact">Impact</a>
-        <a href="#yuvaad">Yuvaad</a>
-        <a href="#leadership">Leadership</a>
-        <a href="register.html">Register</a>
-      </nav>
-    </header>
+import json
+import re
 
-    <main id="top">
-      <section class="hero section-frame">
-        <div class="hero-grid"></div>
-        <div class="hero-logo-ghost" aria-hidden="true">
-          <img src="assets/Adobe%20Express%20-%20file.png" alt="">
-        </div>
-        <div class="hero-content">
-          <p class="eyebrow">National Union of Student Parliaments</p>
-          <h1>Embrace<br>The Challenge.</h1>
-          <p class="hero-copy">Building India's next generation of leaders through debate, democracy and action.</p>
-          <div class="hero-actions">
+log_path = r"C:\Users\Bhavik's device\.gemini\antigravity-ide\brain\73854113-aab1-4b7d-b4fe-f38721340c52\.system_generated\logs\transcript.jsonl"
+
+with open(log_path, 'r', encoding='utf-8') as f:
+    for idx, line in enumerate(f):
+        try:
+            data = json.loads(line)
+            content = data.get('content', '')
+            if 'File Path: `file:///a:/NUSP/index.html`' in content:
+                print(f"Match found in line {idx}")
+                lines = content.split('\n')
+                print(f"Number of lines: {len(lines)}")
+                matches = 0
+                for l in lines:
+                    match = re.match(r'^(\d+): (.*)$', l)
+                    if match:
+                        matches += 1
+                print(f"Number of match regex: {matches}")
+        except Exception as e:
+            pass
+
+                            val = match.group(2)
+                            lines_dict[num] = val
+        except Exception as e:
+            pass
+
+if lines_dict:
+    # Sort by line number
+    sorted_lines = [lines_dict[i] for i in sorted(lines_dict.keys())]
+    with open(output_path, 'w', encoding='utf-8', newline='') as f:
+        f.write('\n'.join(sorted_lines) + '\n')
+    print(f"Successfully restored {len(sorted_lines)} lines to {output_path}")
+else:
+    print("Could not find index.html contents in transcript.jsonl")
+
+            <a class="button button-primary" href="joi
             <a class="button button-primary" href="join.html" data-bubble-button>Join Us</a>
             <a class="button button-secondary" href="register.html" data-bubble-button>Register for Yuvaad</a>
           </div>
@@ -95,9 +74,9 @@
           </div>
           <div class="info-grid">
             <article class="info-card">
-              <h3>What is Yuvaad?</h3>
-              <p>A youth parliament forum for students aged 15–25.</p>
-            </article>
+      box-shadow:0 24px 60px rgba(0,0,0,0.15);">
+              <p>A youth parliament forum for students aged 15�25.</p>
+            </article>
             <article class="info-card">
               <h3>Who Can Join?</h3>
               <p>Any student aged 15–25, any background, any city.</p>
@@ -112,71 +91,60 @@
           </div>
         </div>
       </section>
-
-      <section class="moments section-frame">
-        <div class="moments-strip">
-          <div class="moments-track">
-            <div class="photo-box">Photo</div>
-            <div class="photo-box">Photo</div>
-            <div class="photo-box">Photo</div>
-            <div class="photo-box">Photo</div>
-            <div class="photo-box">Photo</div>
-            <div class="photo-box">Photo</div>
-            <div class="photo-box">Photo</div>
-            <div class="photo-box">Photo</div>
-            <div class="photo-box" aria-hidden="true">Photo</div>
-            <div class="photo-box" aria-hidden="true">Photo</div>
-            <div class="photo-box" aria-hidden="true">Photo</div>
-            <div class="photo-box" aria-hidden="true">Photo</div>
-            <div class="photo-box" aria-hidden="true">Photo</div>
-            <div class="photo-box" aria-hidden="true">Photo</div>
-            <div class="photo-box" aria-hidden="true">Photo</div>
-            <div class="photo-box" aria-hidden="true">Photo</div>
-          </div>
-        </div>
-        <div class="moments-copy">
-          <p class="eyebrow">Our Moments</p>
-          <p>From heated debates to standing ovations, every SF NUSP session is a memory in the making. These moments belong to our members.</p>
-        </div>
-      </section>
-
-      <section class="leadership section-frame" id="leadership">
-        <div class="section-heading">
-          <p class="eyebrow">The People Behind NUSP</p>
-          <h2>Vision. Leadership. Action.</h2>
-        </div>
-        <div class="leaders-grid">
-          <article class="leader-card">
-            <div class="leader-photo">
-              <span>Photo: Pranay Atkar</span>
-              <small>Place background-removed PNG here</small>
-            </div>
-            <h3>Pranay Atkar</h3>
-            <p>Founder, SF NUSP</p>
-          </article>
-          <article class="leader-card">
-            <div class="leader-photo">
-              <span>Photo: Jitender Chug</span>
-              <small>Place background-removed PNG here</small>
-            </div>
-            <h3>Jitender Chug</h3>
-            <p>President, SF NUSP</p>
+        right: -30px;
+        opacity: 0.05;
+      }
+    }
+    let countdownInterval;
+
+    onSnapshot(doc(db, "settings", "countdown"), (docSnap) => {
+      document.getElementById('timer-state-closed').style.display = 'none';
+      document.getElementById('timer-state-soon').style.display = 'none';
+      document.getElementById('timer-state-countdown').style.display = 'none';
+
+      if (!docSnap.exists()) {
+        document.getElementById('timer-state-soon').style.display = 'block';
+        return;
+      }
+
+      const mode = docSnap.data().timerMode;
+
+      if (mode === 'closed') {
+        document.getElementById('timer-state-closed').style.display = 'block';
+      } else if (mode === 'soon') {
+        document.getElementById('timer-state-soon').style.display = 'block';
+      } else if (mode === 'countdown') {
+        document.getElementById('timer-state-countdown').style.display = 'block';
+        const targetDate = new Date(docSnap.data().targetDate);
+        if (countdownInterval) clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+          const diff = targetDate - new Date();
+          if (diff <= 0) {
+            clearInterval(countdownInterval);
+            ['days', 'hours', 'minutes', 'seconds'].forEach(id => {
+              document.getElementById('countdown-' + id).textContent = '00';
+            });
+            return;
+          }
+          document.getEle
+            <p>Programs that channel youth energy into policy thinking, civic presence and tangible outcomes.</p>
           </article>
         </div>
-        <div class="leadership-copy">
-          <p>SF NUSP was founded with a single belief: that young people, given the right platform, can articulate, argue, and lead with conviction. Pranay Atkar and Jitender Chug built this organization from the ground up, city by city, session by session.</p>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="footer-mark">
-        <span class="footer-logo">
-          <img src="assets/Adobe%20Express%20-%20file.png" alt="SF NUSP logo">
-        </span>
-        <p>Embrace the Challenge</p>
       </div>
-      <nav class="footer-links" aria-label="Footer navigation">
+    </section>
+
+    <section class="achievement-section" id="achievements">
+      <div class="section-shell">
+        <div class="section-heading-block compact">
+          <p class="section-kicker">Achievements</p>
+          <h2>Measured growth with a visible national footprint.</h2>
+        </div>
+
+        <div class="achievement-board">
+          <article class="achievement-card">
+            <strong>500+</strong>
+            <p>Members engaged through youth parliament sessions, workshops and leadership forums.</p>
+          </article>
         <a href="#top">Home</a>
         <span class="footer-dot" aria-hidden="true">·</span>
         <a href="#impact">About</a>
@@ -215,3 +183,268 @@
   <script src="app.js"></script>
 </body>
 </html>
+
+          </div>
+          <div class="hero-lady-justice">
+            <img src="assets/1000_F_298964175_wFPqCPZ6mOKL3gWlqSZcoIz56fhyg0fS-removebg-preview.png" alt="Lady Justice">
+          </div>
+          <div class="floating-icon icon-scroll"><img src="assets/Emblem_of_India.svg.webp" alt="Emblem of India"></div>
+        </div>
+
+        <div class="hero-container">
+          <div class="hero-left">
+            <h1 class="hero-headline">Empowering Youth.<br>Embrace the Challenge.</h1>
+            <p class="hero-subheadline">SF NUSP creates spaces where students learn to argue with clarity, listen with
+              seriousness, and lead with conviction. Join India's premier youth parliament movement.</p>
+            <di
+              <a class="btn-hero-primary" href="join.html">
+                <span class="join-orb join-orb--1" aria-hidden="true"></span>
+                <span class="join-orb join-orb--2" aria-hidden="true"></span>
+                <span class="join-orb join-orb--3" aria-hidden="true"></span>
+                <span class="join-orb join-orb--4" aria-hidden="true"></span>
+                <span class="join-orb join-orb--5" aria-hidden="true"></span>
+                <span class="join-button-text">Join Us</span>
+              </a>
+              <a class="blob-btn" href="register.html">
+                Register for Yuvaad
+                <span class="blob-btn__inner">
+                  <span class="blob-btn__blobs">
+                    <span class="blob-btn__blob"></span>
+                    <span class="blob-btn__blob"></span>
+          <span style="color:white;font-size:18px;">📸</span>
+        </div>
+        <div>
+          <p style="font-we
+          background:#25D366;
+          display:flex;align-items:center;justify-content:center;">
+          <span style="color:white;font-size:18px;">💬</span>
+        </div>
+        <div>
+          <p style="font-weight:600;color:#0D1B3E;font-size:14px;margin:0;">
+            WhatsApp</p>
+          <p style="color:rgba(13,27,62,0.4);font-size:12px;margin:2px 0 0;">
+            Chat with us directly</p>
+        </div>
+        <span style="margin-left:auto;color:rgba(13,27,62,0.3);font-size:18px;">→</span>
+      </a>
+
+    </div>
+  </div>
+
+  <script>
+    function openContact() {
+      const modal = document.getElementById('contact-modal');
+      modal.style.display = 'flex';
+    }
+
+    function closeContact() {
+      const modal = document.getElementById('contact-modal');
+      modal.style.display = 'none';
+    }
+
+    document.getElementById('contact-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('contact-modal')) {
+        closeContact();
+      }
+    });
+  </script>
+
+  <!-- SVG Filter for Blob Button -->
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: none;">
+    <defs>
+      <filter id="goo">
+        <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo"></feColorMatrix>
+        <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
+      </filter>
+    </defs>
+  </svg>
+</body>
+
+</html>
+
+
+        onmouseout="this.style.background='#fff'">
+        <div style="
+          width:40px;height:40px;border-radius:10px;
+          background:#25D366;
+          display:flex;align-items:center;justify-content:center;">
+          <span style="color:white;font-size:18px;">💬</span>
+        </div>
+        <div>
+          <p style="font-weight:600;color:#0D1B3E;font-size:14px;margin:0;">
+            WhatsApp</p>
+          <p style="color:rgba(13,27,62,0.4);font-size:12px;margin:2px 0 0;">
+            Chat with us directly</p>
+        </div>
+        <span style="margin-left:auto;color:rgba(13,27,62,0.3);font-size:18px;">→</span>
+      </a>
+
+    </div>
+  </div>
+
+  <script>
+    function openContact() {
+      const modal = document.getElementById('contact-modal');
+      modal.style.display = 'flex';
+    }
+
+    function closeContact() {
+      const modal = document.getElementById('contact-modal');
+      modal.style.display = 'none';
+    }
+
+    document.getElementById('contact-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('contact-modal')) {
+        closeContact();
+      }
+    });
+  </script>
+
+  <!-- SVG Filter for Blob Button -->
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: none;">
+    <defs>
+      <filter id="goo">
+        <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo"></feColorMatrix>
+        <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
+      </filter>
+    </defs>
+  </svg>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
+          <span>WhatsApp</span>
+        </a>
+        <a href="https://www.youtube.com/@sfnusp" aria-label="Watch SF NUSP on YouTube" target="_blank"
+          rel="noopener noreferrer">
+          <span class="social-icon">YT</span>
+          <span>YouTube</span>
+        </a>
+      </div>
+      <div class="footer-divider"></div>
+      <div class="footer-meta">
+        <div class="footer-legal">
+          <a href="support.html">Support</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Use</a>
+        </div>
+        <p>© 2026 SF NUSP. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Lightbox Modal for Moments Gallery -->
+  <div id="lightbox-modal" class="lightbox-modal" aria-hidden="true" role="dialog">
+    <button class="lightbox-close" aria-label="Close image lightbox">&times;</button>
+    <div class="lightbox-content">
+      <img id="lightbox-img" src="" alt="Enlarged gallery moment">
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+
+  <!-- Contact Modal -->
+  <div id="contact-modal" style="
+    display:none;
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,0.5);
+    backdrop-filter:blur(6px);
+    z-index:9999;
+    align-items:center;
+    justify-content:center;">
+
+    <div style="
+      background:#fff;
+      border-radius:20px;
+      padding:36px;
+      max-width:380px;
+      width:90%;
+      position:relative;
+      box-shadow:0 24px 60px rgba(0,0,0,0.15);">
+
+      <button onclick="closeContact()" style="
+        position:absolute;top:16px;right:16px;
+        background:rgba(13,27,62,0.08);
+        border:none;border-radius:50%;
+        width:32px;height:32px;
+        font-size:16px;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;">
+        ✕
+      </button>
+
+      <h3 style="
+        font-family:'Playfair Display',serif;
+        font-size:22px;color:#0D1B3E;
+        margin-bottom:6px;">Get in Touch</h3>
+      <p style="
+        font-size:13px;color:rgba(13,27,62,0.5);
+        margin-bottom:28px;">
+        We would love to hear from you. Reach out on any platform below.
+      </p>
+
+      <a href="https://instagram.com/sf_nusp" target="_blank" style="
+          display:flex;align-items:center;gap:14px;
+          padding:14px 18px;border-radius:12px;
+          border:1px solid rgba(13,27,62,0.1);
+          text-decoration:none;margin-bottom:12px;
+          transition:all 0.2s;background:#fff;" onmouseover="this.style.background='#fff0f0'"
+        onmouseout="this.style.background='#fff'">
+        <div style="
+          width:40px;height:40px;border-radius:10px;
+          background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+          display:flex;align-items:center;justify-content:center;">
+          <span style="color:white;font-size:18px;">📸</span>
+        </div>
+    
+          <p style="font-we
+          background:#25D366;
+          display:flex;align-items:center;justify-content:center;">
+          <span style="color:white;font-size:18px;">💬</span>
+        </div>
+        <div>
+          <p style="font-weight:600;color:#0D1B3E;font-size:14px;margin:0;">
+            WhatsApp</p>
+          <p style="color:rgba(13,27,62,0.4);font-size:12px;margin:2px 0 0;">
+            Chat with us directly</p>
+        </div>
+        <span style="margin-left:auto;color:rgba(13,27,62,0.3);font-size:18px;">→</span>
+      </a>
+
+    </div>
+  </div>
+
+  <script>
+    function openContact() {
+      const modal = document.getElementById('contact-modal');
+      modal.style.display = 'flex';
+    }
+
+    function closeContact() {
+      const modal = document.getElementById('contact-modal');
+      modal.style.display = 'none';
+    }
+
+    document.getElementById('contact-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('contact-modal')) {
+        closeContact();
+      }
+    });
+  </script>
+
+  <!-- SVG Filter for Blob Button -->
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: none;">
+    <defs>
+      <filter id="goo">
+        <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo"></feColorMatrix>
+        <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
+      </filter>
+    </defs>
+  </svg>
+</body>
+
+</html>
+

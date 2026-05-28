@@ -206,3 +206,199 @@ function setupFloatingWhatsAppButton() {
 }
 
 setupFloatingWhatsAppButton();
+
+// FAQ Accordion Toggle
+function setupFaqAccordion() {
+  const faqItems = document.querySelectorAll(".faq-item");
+  if (!faqItems.length) return;
+
+  faqItems.forEach((item) => {
+    const trigger = item.querySelector(".faq-trigger");
+    const panel = item.querySelector(".faq-panel");
+    if (!trigger || !panel) return;
+
+    trigger.addEventListener("click", () => {
+      const isExpanded = trigger.getAttribute("aria-expanded") === "true";
+      
+      // Close all other panels
+      faqItems.forEach((otherItem) => {
+        const otherTrigger = otherItem.querySelector(".faq-trigger");
+        const otherPanel = otherItem.querySelector(".faq-panel");
+        if (otherTrigger && otherPanel && otherItem !== item) {
+          otherTrigger.setAttribute("aria-expanded", "false");
+          otherPanel.classList.remove("is-active");
+          const otherIcon = otherTrigger.querySelector(".faq-icon");
+          if (otherIcon) otherIcon.textContent = "+";
+        }
+      });
+
+      // Toggle current panel
+      trigger.setAttribute("aria-expanded", String(!isExpanded));
+      panel.classList.toggle("is-active", !isExpanded);
+      const icon = trigger.querySelector(".faq-icon");
+      if (icon) icon.textContent = isExpanded ? "+" : "−";
+    });
+  });
+}
+setupFaqAccordion();
+
+// ─── Event Countdown (admin-controlled 3-mode system) ───────────────────────
+const EVENT_MODE_KEY  = "sf_nusp_event_mode";   // "closed" | "date_soon" | "countdown"
+const EVENT_DATE_KEY  = "sf_nusp_event_date";   // ISO date-time string
+
+function readEventMode() {
+  try { return localStorage.getItem(EVENT_MODE_KEY) || "countdown"; } catch { return "countdown"; }
+}
+
+function readEventDate() {
+  try { return localStorage.getItem(EVENT_DATE_KEY) || "2026-10-17T09:00:00"; } catch { return "2026-10-17T09:00:00"; }
+}
+
+function setupEventCountdown() {
+  const region = document.getElementById("event-countdown-region");
+  if (!region) return;
+
+  const mode = readEventMode();
+
+  if (mode === "closed") {
+    region.innerHTML = `
+      <div class="event-state-banner event-state-closed">
+        <span class="event-state-icon">🔒</span>
+        <p class="event-state-title">Registrations Closed</p>
+        <p class="event-state-sub">Registration for this event has ended. Stay tuned for future events.</p>
+      </div>`;
+    return;
+  }
+
+  if (mode === "date_soon") {
+    region.innerHTML = `
+      <div class="event-state-banner event-state-soon">
+        <span class="event-state-icon">📅</span>
+        <p class="event-state-title">Date Reveal Soon</p>
+        <p class="event-state-sub">We're finalising the date — check back soon!</p>
+      </div>`;
+    return;
+  }
+
+  // mode === "countdown" — render live timer
+  const dateStr = readEventDate();
+  const targetTime = new Date(dateStr).getTime();
+
+  region.innerHTML = `
+    <p class="countdown-title">TIME REMAINING TO REGISTER</p>
+    <div class="countdown-timer" id="countdown">
+      <div class="countdown-item"><span class="countdown-number" id="days">00</span><span class="countdown-label">Days</span></div>
+      <div class="countdown-separator">:</div>
+      <div class="countdown-item"><span class="countdown-number" id="hours">00</span><span class="countdown-label">Hours</span></div>
+      <div class="countdown-separator">:</div>
+      <div class="countdown-item"><span class="countdown-number" id="minutes">00</span><span class="countdown-label">Mins</span></div>
+      <div class="countdown-separator">:</div>
+      <div class="countdown-item"><span class="countdown-number" id="seconds">00</span><span class="countdown-label">Secs</span></div>
+    </div>`;
+
+  const daysEl    = document.getElementById("days");
+  const hoursEl   = document.getElementById("hours");
+  const minutesEl = document.getElementById("minutes");
+  const secondsEl = document.getElementById("seconds");
+
+  function tick() {
+    const diff = targetTime - Date.now();
+    if (diff <= 0) {
+      clearInterval(timer);
+      [daysEl, hoursEl, minutesEl, secondsEl].forEach(el => { if (el) el.textContent = "00"; });
+      return;
+    }
+    if (daysEl)    daysEl.textContent    = String(Math.floor(diff / 86400000)).padStart(2, "0");
+    if (hoursEl)   hoursEl.textContent   = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, "0");
+    if (minutesEl) minutesEl.textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
+    if (secondsEl) secondsEl.textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
+  }
+
+  tick();
+  const timer = setInterval(tick, 1000);
+}
+
+// setupEventCountdown();
+
+
+// ─── Moments Lightbox Gallery ────────────────────────────────────────────────
+function setupMomentsGallery() {
+  const photoBoxes = document.querySelectorAll(".photo-box");
+  const modal = document.getElementById("lightbox-modal");
+  const modalImg = document.getElementById("lightbox-img");
+  const closeBtn = document.querySelector(".lightbox-close");
+
+  if (!photoBoxes.length || !modal || !modalImg || !closeBtn) {
+    return;
+  }
+
+  // Helper to open modal
+  function openLightbox(imgSrc, imgAlt) {
+    modalImg.src = imgSrc;
+    modalImg.alt = imgAlt || "Enlarged moment";
+    modal.classList.add("is-active");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("lightbox-open");
+    
+    // Set focus on close button for accessibility
+    closeBtn.focus();
+  }
+
+  // Helper to close modal
+  function closeLightbox() {
+    modal.classList.remove("is-active");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("lightbox-open");
+    
+    // Clear image source after transition finishes to avoid flash next time
+    setTimeout(() => {
+      if (!modal.classList.contains("is-active")) {
+        modalImg.src = "";
+      }
+    }, 300);
+  }
+
+  // Attach click listeners to all photo boxes
+  photoBoxes.forEach((box) => {
+    const img = box.querySelector("img");
+    if (!img) return;
+
+    box.addEventListener("click", () => {
+      openLightbox(img.src, img.alt);
+    });
+
+    // Make interactive via keyboard (Enter/Space)
+    box.setAttribute("tabindex", "0");
+    box.setAttribute("role", "button");
+    box.setAttribute("aria-label", "View larger moment photo");
+
+    box.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openLightbox(img.src, img.alt);
+      }
+    });
+  });
+
+  // Close triggers
+  closeBtn.addEventListener("click", closeLightbox);
+  
+  modal.addEventListener("click", (e) => {
+    // If clicked the background overlay itself (not the image or content wrapper)
+    if (e.target === modal || e.target.classList.contains("lightbox-content")) {
+      closeLightbox();
+    }
+  });
+
+  // Escape key support
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.classList.contains("is-active")) {
+      closeLightbox();
+    }
+  });
+}
+
+setupMomentsGallery();
+
+
+
