@@ -1,50 +1,419 @@
-import json
-import re
+<!DOCTYPE html>
+<html lang="en">
 
-log_path = r"C:\Users\Bhavik's device\.gemini\antigravity-ide\brain\73854113-aab1-4b7d-b4fe-f38721340c52\.system_generated\logs\transcript.jsonl"
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SF NUSP | Youth Parliament India: Embrace the Challenge</title>
+  <meta name="description"
+    content="SF NUSP is India's youth parliament organization building the next generation of leaders through debate, democracy and civic action. Join Yuvaad, our flagship youth parliament program.">
+  <meta name="keywords"
+    content="SF NUSP, NUSP, youth parliament India, yuvaad, student parliament, youth leadership India, debate competition India, civic education, Pranay Atkar, Jitender Chug">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://sfnusp.org/">
+  <meta property="og:title" content="SF NUSP | Youth Parliament India">
+  <meta property="og:description"
+    content="SF NUSP is India's youth parliament organization building the next generation of leaders through debate, democracy and civic action. Join Yuvaad, our flagship youth parliament program.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sfnusp.org/">
+  <meta property="og:image" content="https://sfnusp.org/assets/Adobe%20Express%20-%20file.png">
+  <meta property="og:image:alt" content="SF NUSP logo">
+  <link rel="icon" type="image/png" href="assets/Adobe%20Express%20-%20file.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Fustat:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 
-with open(log_path, 'r', encoding='utf-8') as f:
-    for idx, line in enumerate(f):
-        try:
-            data = json.loads(line)
-            content = data.get('content', '')
-            if 'File Path: `file:///a:/NUSP/index.html`' in content:
-                print(f"Match found in line {idx}")
-                lines = content.split('\n')
-                print(f"Number of lines: {len(lines)}")
-                matches = 0
-                for l in lines:
-                    match = re.match(r'^(\d+): (.*)$', l)
-                    if match:
-                        matches += 1
-                print(f"Number of match regex: {matches}")
-        except Exception as e:
-            pass
+  <!-- Firebase: Firestore Countdown Timer (3-mode: closed / soon / countdown) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-                            val = match.group(2)
-                            lines_dict[num] = val
-        except Exception as e:
-            pass
+    const firebaseConfig = {
+      apiKey: "AIzaSyCJ8BelUmuSjVbK0VsfNtJIlM2B9AblNNc",
+      authDomain: "nusp-b4b49.firebaseapp.com",
+      projectId: "nusp-b4b49",
+      storageBucket: "nusp-b4b49.firebasestorage.app",
+      messagingSenderId: "689489197003",
+      appId: "1:689489197003:web:46ea79000f019710f8a84e"
+    };
 
-if lines_dict:
-    # Sort by line number
-    sorted_lines = [lines_dict[i] for i in sorted(lines_dict.keys())]
-    with open(output_path, 'w', encoding='utf-8', newline='') as f:
-        f.write('\n'.join(sorted_lines) + '\n')
-    print(f"Successfully restored {len(sorted_lines)} lines to {output_path}")
-else:
-    print("Could not find index.html contents in transcript.jsonl")
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-            <a class="button button-primary" href="joi
-            <a class="button button-primary" href="join.html" data-bubble-button>Join Us</a>
-            <a class="button button-secondary" href="register.html" data-bubble-button>Register for Yuvaad</a>
+    let countdownInterval;
+
+    onSnapshot(doc(db, "settings", "countdown"), (docSnap) => {
+      // Hide all states first
+      document.getElementById('timer-state-closed').style.display = 'none';
+      document.getElementById('timer-state-soon').style.display = 'none';
+      document.getElementById('timer-state-countdown').style.display = 'none';
+
+      if (!docSnap.exists()) {
+        document.getElementById('timer-state-soon').style.display = 'block';
+        return;
+      }
+
+      const mode = docSnap.data().timerMode;
+
+      if (mode === 'closed') {
+        document.getElementById('timer-state-closed').style.display = 'block';
+      } else if (mode === 'soon') {
+        document.getElementById('timer-state-soon').style.display = 'block';
+      } else if (mode === 'countdown') {
+        document.getElementById('timer-state-countdown').style.display = 'block';
+        const targetDate = new Date(docSnap.data().targetDate);
+        if (countdownInterval) clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+          const diff = targetDate - new Date();
+          if (diff <= 0) {
+            clearInterval(countdownInterval);
+            ['countdown-days', 'countdown-hours', 'countdown-minutes', 'countdown-seconds'].forEach(id => {
+              document.getElementById(id).textContent = '00';
+            });
+            return;
+          }
+          document.getElementById('countdown-days').textContent =
+            String(Math.floor(diff / 86400000)).padStart(2, '0');
+          document.getElementById('countdown-hours').textContent =
+            String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+          document.getElementById('countdown-minutes').textContent =
+            String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+          document.getElementById('countdown-seconds').textContent =
+            String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        }, 1000);
+      }
+    });
+  </script>
+</head>
+
+<body class="home-page">
+  <div class="page-shell">
+
+    <!-- Scattered Watermark Motifs (fixed, behind everything) -->
+    <div class="watermark-motif watermark-1" aria-hidden="true">
+      <img src="assets/Emblem_of_India.svg.webp" alt="">
+    </div>
+    <div class="watermark-motif watermark-2" aria-hidden="true">
+      <img src="assets/Emblem_of_India.svg.webp" alt="">
+    </div>
+    <div class="watermark-motif watermark-3" aria-hidden="true">
+      <img src="assets/Emblem_of_India.svg.webp" alt="">
+    </div>
+
+    <!-- Glass Navbar -->
+    <header class="site-header">
+      <!-- Brand -->
+      <a class="brand" href="#top" aria-label="SF NUSP home">
+        <span class="brand-mark">
+          <img src="assets/Adobe%20Express%20-%20file.png" alt="SF NUSP logo">
+        </span>
+        <span class="brand-glass">SF NUSP</span>
+      </a>
+
+      <!-- Hamburger (mobile) -->
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav"
+        aria-label="Open navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- Nav Links -->
+      <nav class="site-nav" id="site-nav" aria-label="Primary navigation">
+        <a href="#top">Home</a>
+        <a href="#impact">Impact</a>
+        <a href="#yuvaad">Yuvaad</a>
+        <a href="#leadership">Leadership</a>
+        <a href="register.html">Register</a>
+      </nav>
+
+      <!-- Join Us CTA -->
+      <div class="nav-right">
+        <a class="button-join-glass" href="join.html" aria-label="Join SF NUSP">
+          <span class="join-orb join-orb--1"></span>
+          <span class="join-orb join-orb--2"></span>
+          <span class="join-orb join-orb--3"></span>
+          <span class="join-orb join-orb--4"></span>
+          <span class="join-orb join-orb--5"></span>
+          <span class="join-button-text">Join Us</span>
+          <span class="arrow-icon">→</span>
+        </a>
+      </div>
+    </header>
+
+    <main id="top">
+
+      <!-- ══ HERO SECTION ══ -->
+      <section class="hero-glass">
+
+        <!-- Background colour ellipses -->
+        <div class="bg-ellipses" aria-hidden="true">
+          <div class="ellipse ellipse-1"></div>
+          <div class="ellipse ellipse-2"></div>
+          <div class="ellipse ellipse-3"></div>
+          <div class="ellipse ellipse-4"></div>
+          <div class="ellipse ellipse-impact"></div>
+          <div class="ellipse ellipse-leadership"></div>
+        </div>
+
+        <!-- Floating background icons (no gavel — subtle only) -->
+        <div class="hero-floating-elements" aria-hidden="true">
+          <div class="floating-icon icon-scroll">
+            <img src="assets/Emblem_of_India.svg.webp" alt="">
+          </div>
+        </div>
+
+        <!-- Lady Justice decorative figure (left) -->
+        <div class="hero-lady-justice" aria-hidden="true">
+          <img src="assets/1000_F_298964175_wFPqCPZ6mOKL3gWlqSZcoIz56fhyg0fS-removebg-preview.png"
+            alt="Lady Justice">
+        </div>
+
+        <!-- Hero content grid -->
+        <div class="hero-container">
+          <div class="hero-left">
+            <h1 class="hero-headline">Empowering Youth.<br>Embrace the<br>Challenge.</h1>
+            <p class="hero-subheadline">SF NUSP creates spaces where students learn to argue with clarity, listen with
+              seriousness, and lead with conviction. Join India's premier youth parliament movement.</p>
+            <div class="hero-buttons">
+              <!-- Primary: Join Us -->
+              <a class="btn-hero-primary" href="join.html" aria-label="Join SF NUSP">
+                <span class="join-orb join-orb--1"></span>
+                <span class="join-orb join-orb--2"></span>
+                <span class="join-orb join-orb--3"></span>
+                <span class="join-orb join-orb--4"></span>
+                <span class="join-orb join-orb--5"></span>
+                <span class="join-button-text">Join Us</span>
+              </a>
+              <!-- Secondary: Register (blob button) -->
+              <a class="blob-btn" href="register.html" aria-label="Register for Yuvaad">
+                Register for Yuvaad
+                <span class="blob-btn__inner">
+                  <span class="blob-btn__blobs">
+                    <span class="blob-btn__blob"></span>
+                    <span class="blob-btn__blob"></span>
+                    <span class="blob-btn__blob"></span>
+                    <span class="blob-btn__blob"></span>
+                  </span>
+                </span>
+              </a>
+            </div>
+          </div>
+          <div class="hero-right">
+            <div class="logo-container">
+              <div class="logo-float-wrapper">
+                <img class="logo-rotate-img" src="assets/Adobe%20Express%20-%20file.png" alt="SF NUSP Logo">
+              </div>
+              <div class="outer-ring-pulse"></div>
+              <div class="outer-ring-dashed"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scrolling Ticker -->
+        <div class="hero-ticker-wrap">
+          <div class="hero-ticker">
+            <div class="ticker-content">
+              <span>EMPOWERING YOUTH VOICES</span>
+              <span class="ticker-dot">•</span>
+              <span>DEMOCRACY IN ACTION</span>
+              <span class="ticker-dot">•</span>
+              <span>SF NUSP YOUTH PARLIAMENT</span>
+              <span class="ticker-dot">•</span>
+              <span>ARGUE WITH CLARITY</span>
+              <span class="ticker-dot">•</span>
+              <span>LISTEN WITH SERIOUSNESS</span>
+              <span class="ticker-dot">•</span>
+              <span>LEAD WITH CONVICTION</span>
+              <span class="ticker-dot">•</span>
+            </div>
+            <div class="ticker-content" aria-hidden="true">
+              <span>EMPOWERING YOUTH VOICES</span>
+              <span class="ticker-dot">•</span>
+              <span>DEMOCRACY IN ACTION</span>
+              <span class="ticker-dot">•</span>
+              <span>SF NUSP YOUTH PARLIAMENT</span>
+              <span class="ticker-dot">•</span>
+              <span>ARGUE WITH CLARITY</span>
+              <span class="ticker-dot">•</span>
+              <span>LISTEN WITH SERIOUSNESS</span>
+              <span class="ticker-dot">•</span>
+              <span>LEAD WITH CONVICTION</span>
+              <span class="ticker-dot">•</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Pill Bar -->
+        <div class="hero-stats-bar">
+          <div class="hero-stat-pill">
+            <span class="pill-number">5,000+</span>
+            <span class="pill-label">YOUTH REACHED</span>
+          </div>
+          <div class="pill-divider"></div>
+          <div class="hero-stat-pill">
+            <span class="pill-number">50+</span>
+            <span class="pill-label">INSTITUTES</span>
+          </div>
+          <div class="pill-divider"></div>
+          <div class="hero-stat-pill">
+            <span class="pill-number">15+</span>
+            <span class="pill-label">ASSEMBLIES</span>
           </div>
         </div>
       </section>
 
-      <section class="impact-yuvaad section-frame" id="impact">
+      <!-- ══ QUOTE — Gandhi ══ -->
+      <div class="section-divider-wrap">
+        <hr class="glass-divider">
+        <blockquote class="glass-quote">
+          <p>"You must be the change you wish to see in the world."</p>
+          <cite>— MAHATMA GANDHI</cite>
+        </blockquote>
+        <hr class="glass-divider">
+      </div>
+
+      <!-- ══ HOW IT WORKS ══ -->
+      <section class="how-it-works section-frame">
         <div class="section-heading">
-          <p class="eyebrow">Our Impact</p>
+          <p class="eyebrow">THE JOURNEY</p>
+          <h2>How It Works</h2>
+        </div>
+        <div class="steps-grid">
+          <div class="step-card">
+            <span class="step-number">01</span>
+            <h3>Apply &amp; Prepare</h3>
+            <p>Register online, select your preferred committee, receive your portfolio, and study the agenda materials
+              provided by our team.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-number">02</span>
+            <h3>Attend &amp; Debate</h3>
+            <p>Take your seat on the floor, participate in question hours, debate critical bills, and collaborate on
+              resolutions with fellow delegates.</p>
+          </div>
+          <div class="step-card">
+            <span class="step-number">03</span>
+            <h3>Lead &amp; Inspire</h3>
+            <p>Develop diplomacy, receive recognition, expand your network, and join our active community of future
+              change-makers.</p>
+          </div>
+        </div>
+        <div class="section-corner-decor decor-right" aria-hidden="true">
+          <img src="assets/Emblem_of_India.svg.webp" alt="">
+        </div>
+      </section>
+
+      <!-- ══ QUOTE — Kalam ══ -->
+      <div class="section-divider-wrap">
+        <hr class="glass-divider">
+        <blockquote class="glass-quote">
+          <p>"Youth should dream and transform dreams into action. That is the best gift youth can give to the nation."</p>
+          <cite>— DR. A. P. J. ABDUL KALAM</cite>
+        </blockquote>
+        <hr class="glass-divider">
+      </div>
+
+      <!-- ══ UPCOMING EVENTS ══ -->
+      <section class="upcoming-events section-frame">
+        <div class="section-corner-decor decor-left" aria-hidden="true">
+          <img src="assets/Emblem_of_India.svg.webp" alt="">
+        </div>
+        <div class="section-corner-decor decor-right" aria-hidden="true">
+          <img src="assets/Emblem_of_India.svg.webp" alt="">
+        </div>
+        <div class="section-heading">
+          <p class="eyebrow">NEXT ASSEMBLY</p>
+          <h2>Upcoming Assembly</h2>
+        </div>
+        <div class="event-glass-card">
+          <div class="event-details">
+            <span class="event-badge">FLAGSHIP EVENT</span>
+            <h3>SF NUSP National Youth Parliament 2026</h3>
+            <div class="event-meta-info">
+              <span>📅 October 17-18, 2026</span>
+              <span>📍 Nagpur, Maharashtra</span>
+            </div>
+            <p class="event-desc">Join hundreds of passionate delegates from across the nation to discuss pressing
+              national issues, draft public bills, and experience the intensity of real legislative debate.</p>
+            <a class="button button-primary" href="register.html" data-bubble-button>Secure Your Seat →</a>
+          </div>
+          <div class="event-countdown-wrap" id="event-countdown-region">
+            <!-- Timer state: Closed -->
+            <div id="timer-state-closed" style="display:none;" class="timer-state-box">
+              <div class="timer-icon">🔒</div>
+              <p class="timer-title">Registrations Closed</p>
+              <p class="timer-sub">Registration for this event has ended. Stay tuned for future events.</p>
+            </div>
+            <!-- Timer state: Date Reveal Soon -->
+            <div id="timer-state-soon" style="display:none;" class="timer-state-box">
+              <div class="timer-icon">📅</div>
+              <p class="timer-title">Date Reveal Soon</p>
+              <p class="timer-sub">We're finalising the date — check back soon!</p>
+            </div>
+            <!-- Timer state: Live Countdown -->
+            <div id="timer-state-countdown" style="display:none;">
+              <p class="countdown-title">TIME REMAINING TO REGISTER</p>
+              <div class="countdown-timer" id="countdown">
+                <div class="countdown-item">
+                  <span class="countdown-number" id="countdown-days">00</span>
+                  <span class="countdown-label">Days</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-item">
+                  <span class="countdown-number" id="countdown-hours">00</span>
+                  <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-item">
+                  <span class="countdown-number" id="countdown-minutes">00</span>
+                  <span class="countdown-label">Mins</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-item">
+                  <span class="countdown-number" id="countdown-seconds">00</span>
+                  <span class="countdown-label">Secs</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ MOMENTS GALLERY ══ -->
+      <section class="moments section-frame">
+        <div class="moments-strip">
+          <div class="moments-track">
+            <div class="photo-box"><img src="assets/20250915_110258.jpg" alt="Youth Parliament Session 1"></div>
+            <div class="photo-box"><img src="assets/20250915_115620.jpg" alt="Youth Parliament Session 2"></div>
+            <div class="photo-box"><img src="assets/20250915_121804.jpg" alt="Youth Parliament Session 3"></div>
+            <div class="photo-box"><img src="assets/20250915_121917.jpg" alt="Youth Parliament Session 4"></div>
+            <div class="photo-box"><img src="assets/Copy of IMG_9052.jpg" alt="Youth Parliament Session 5"></div>
+            <!-- Duplicated for seamless loop -->
+            <div class="photo-box" aria-hidden="true"><img src="assets/20250915_110258.jpg" alt=""></div>
+            <div class="photo-box" aria-hidden="true"><img src="assets/20250915_115620.jpg" alt=""></div>
+            <div class="photo-box" aria-hidden="true"><img src="assets/20250915_121804.jpg" alt=""></div>
+            <div class="photo-box" aria-hidden="true"><img src="assets/20250915_121917.jpg" alt=""></div>
+            <div class="photo-box" aria-hidden="true"><img src="assets/Copy of IMG_9052.jpg" alt=""></div>
+          </div>
+        </div>
+        <div class="moments-copy">
+          <p class="eyebrow">OUR MOMENTS</p>
+          <p>From heated debates to standing ovations, every SF NUSP session is a memory in the making. These moments
+            belong to our members.</p>
+        </div>
+      </section>
+
+      <!-- ══ IMPACT & YUVAAD ══ -->
+      <section class="impact-yuvaad section-frame" id="impact">
+        <div class="section-corner-decor decor-left" aria-hidden="true">
+          <img src="assets/Emblem_of_India.svg.webp" alt="">
+        </div>
+        <div class="section-heading">
+          <p class="eyebrow">OUR IMPACT</p>
           <h2>Measured impact. Earned authority.</h2>
         </div>
         <div class="stats-grid">
@@ -65,18 +434,20 @@ else:
             <span>Years</span>
           </article>
         </div>
-        <p class="section-copy">Each milestone adds weight to the seal, with more members, more events, more cities, and more voices.</p>
+        <p class="section-copy">Each milestone adds weight to the seal, with more members, more events, more cities, and
+          more voices.</p>
 
+        <!-- Yuvaad Sub-section -->
         <div class="yuvaad-block" id="yuvaad">
           <div class="section-heading section-heading-left">
-            <p class="eyebrow">Yuvaad</p>
+            <p class="eyebrow">YUVAAD</p>
             <h2>The flagship arena for debate, democracy and action.</h2>
           </div>
           <div class="info-grid">
             <article class="info-card">
-      box-shadow:0 24px 60px rgba(0,0,0,0.15);">
-              <p>A youth parliament forum for students aged 15�25.</p>
-            </article>
+              <h3>What is Yuvaad?</h3>
+              <p>A youth parliament forum for students aged 15–25.</p>
+            </article>
             <article class="info-card">
               <h3>Who Can Join?</h3>
               <p>Any student aged 15–25, any background, any city.</p>
@@ -87,64 +458,71 @@ else:
             </article>
           </div>
           <div class="center-action">
-            <a class="button button-primary button-large" href="register.html" data-bubble-button>Register Now <span aria-hidden="true">→</span></a>
+            <a class="button button-primary button-large" href="register.html" data-bubble-button>Register Now <span
+                aria-hidden="true">→</span></a>
           </div>
         </div>
+        <div class="section-corner-decor decor-right" aria-hidden="true">
+          <img src="assets/Emblem_of_India.svg.webp" alt="">
+        </div>
       </section>
-        right: -30px;
-        opacity: 0.05;
-      }
-    }
-    let countdownInterval;
-
-    onSnapshot(doc(db, "settings", "countdown"), (docSnap) => {
-      document.getElementById('timer-state-closed').style.display = 'none';
-      document.getElementById('timer-state-soon').style.display = 'none';
-      document.getElementById('timer-state-countdown').style.display = 'none';
-
-      if (!docSnap.exists()) {
-        document.getElementById('timer-state-soon').style.display = 'block';
-        return;
-      }
-
-      const mode = docSnap.data().timerMode;
-
-      if (mode === 'closed') {
-        document.getElementById('timer-state-closed').style.display = 'block';
-      } else if (mode === 'soon') {
-        document.getElementById('timer-state-soon').style.display = 'block';
-      } else if (mode === 'countdown') {
-        document.getElementById('timer-state-countdown').style.display = 'block';
-        const targetDate = new Date(docSnap.data().targetDate);
-        if (countdownInterval) clearInterval(countdownInterval);
-        countdownInterval = setInterval(() => {
-          const diff = targetDate - new Date();
-          if (diff <= 0) {
-            clearInterval(countdownInterval);
-            ['days', 'hours', 'minutes', 'seconds'].forEach(id => {
-              document.getElementById('countdown-' + id).textContent = '00';
-            });
-            return;
-          }
-          document.getEle
-            <p>Programs that channel youth energy into policy thinking, civic presence and tangible outcomes.</p>
-          </article>
-        </div>
+
+      <!-- ══ QUOTE — Ambedkar ══ -->
+      <div class="section-divider-wrap">
+        <hr class="glass-divider">
+        <blockquote class="glass-quote">
+          <p>"Democracy is not just a form of government; it is a way of life."</p>
+          <cite>— DR. B. R. AMBEDKAR</cite>
+        </blockquote>
+        <hr class="glass-divider">
       </div>
-    </section>
 
-    <section class="achievement-section" id="achievements">
-      <div class="section-shell">
-        <div class="section-heading-block compact">
-          <p class="section-kicker">Achievements</p>
-          <h2>Measured growth with a visible national footprint.</h2>
+      <!-- ══ LEADERSHIP ══ -->
+      <section class="leadership section-frame" id="leadership">
+        <div class="section-corner-decor decor-left" aria-hidden="true">
+          <img src="assets/Emblem_of_India.svg.webp" alt="">
         </div>
-
-        <div class="achievement-board">
-          <article class="achievement-card">
-            <strong>500+</strong>
-            <p>Members engaged through youth parliament sessions, workshops and leadership forums.</p>
+        <div class="section-heading">
+          <p class="eyebrow">THE PEOPLE BEHIND NUSP</p>
+          <h2>Vision. Leadership. Action.</h2>
+        </div>
+        <div class="leaders-grid">
+          <article class="leader-card">
+            <div class="leader-photo">
+              <span>Pranay Atkar</span>
+            </div>
+            <h3>Pranay Atkar</h3>
+            <p>Founder, SF NUSP</p>
           </article>
+          <article class="leader-card">
+            <div class="leader-photo">
+              <span>Jitender Chug</span>
+            </div>
+            <h3>Jitender Chug</h3>
+            <p>President, SF NUSP</p>
+          </article>
+        </div>
+        <div class="leadership-copy">
+          <p>SF NUSP was founded with a single belief: that young people, given the right platform, can articulate,
+            argue, and lead with conviction. Pranay Atkar and Jitender Chug built this organization from the ground up,
+            city by city, session by session.</p>
+        </div>
+        <div class="section-corner-decor decor-right" aria-hidden="true">
+          <img src="assets/Emblem_of_India.svg.webp" alt="">
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+      <div class="footer-mark">
+        <span class="footer-logo">
+          <img src="assets/Adobe%20Express%20-%20file.png" alt="SF NUSP logo">
+        </span>
+        <p>Embrace the Challenge</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
         <a href="#top">Home</a>
         <span class="footer-dot" aria-hidden="true">·</span>
         <a href="#impact">About</a>
@@ -153,169 +531,17 @@ else:
         <span class="footer-dot" aria-hidden="true">·</span>
         <a href="register.html">Register</a>
         <span class="footer-dot" aria-hidden="true">·</span>
-        <a href="#leadership">Contact</a>
+        <a href="javascript:void(0)" onclick="openContact()">Contact</a>
       </nav>
       <div class="footer-social">
-        <a href="https://www.instagram.com/sf_nusp?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==" aria-label="Follow SF NUSP on Instagram" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.instagram.com/sf_nusp?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw=="
+          aria-label="Follow SF NUSP on Instagram" target="_blank" rel="noopener noreferrer">
           <span class="social-icon">IG</span>
           <span>Instagram</span>
         </a>
-        <a href="https://whatsapp.com/channel/0029VbBBjk7HwXbG065Qnd0e" aria-label="Join the SF NUSP WhatsApp channel" target="_blank" rel="noopener noreferrer">
+        <a href="https://whatsapp.com/channel/0029VbBBjk7HwXbG065Qnd0e"
+          aria-label="Join the SF NUSP WhatsApp channel" target="_blank" rel="noopener noreferrer">
           <span class="social-icon">WA</span>
-          <span>WhatsApp</span>
-        </a>
-        <a href="https://www.youtube.com/@sfnusp" aria-label="Watch SF NUSP on YouTube" target="_blank" rel="noopener noreferrer">
-          <span class="social-icon">YT</span>
-          <span>YouTube</span>
-        </a>
-      </div>
-      <div class="footer-divider"></div>
-      <div class="footer-meta">
-        <div class="footer-legal">
-          <a href="support.html">Support</a>
-          <a href="privacy.html">Privacy Policy</a>
-          <a href="terms.html">Terms of Use</a>
-        </div>
-        <p>© 2026 SF NUSP. All rights reserved.</p>
-      </div>
-    </footer>
-  </div>
-  <script src="app.js"></script>
-</body>
-</html>
-
-          </div>
-          <div class="hero-lady-justice">
-            <img src="assets/1000_F_298964175_wFPqCPZ6mOKL3gWlqSZcoIz56fhyg0fS-removebg-preview.png" alt="Lady Justice">
-          </div>
-          <div class="floating-icon icon-scroll"><img src="assets/Emblem_of_India.svg.webp" alt="Emblem of India"></div>
-        </div>
-
-        <div class="hero-container">
-          <div class="hero-left">
-            <h1 class="hero-headline">Empowering Youth.<br>Embrace the Challenge.</h1>
-            <p class="hero-subheadline">SF NUSP creates spaces where students learn to argue with clarity, listen with
-              seriousness, and lead with conviction. Join India's premier youth parliament movement.</p>
-            <di
-              <a class="btn-hero-primary" href="join.html">
-                <span class="join-orb join-orb--1" aria-hidden="true"></span>
-                <span class="join-orb join-orb--2" aria-hidden="true"></span>
-                <span class="join-orb join-orb--3" aria-hidden="true"></span>
-                <span class="join-orb join-orb--4" aria-hidden="true"></span>
-                <span class="join-orb join-orb--5" aria-hidden="true"></span>
-                <span class="join-button-text">Join Us</span>
-              </a>
-              <a class="blob-btn" href="register.html">
-                Register for Yuvaad
-                <span class="blob-btn__inner">
-                  <span class="blob-btn__blobs">
-                    <span class="blob-btn__blob"></span>
-                    <span class="blob-btn__blob"></span>
-          <span style="color:white;font-size:18px;">📸</span>
-        </div>
-        <div>
-          <p style="font-we
-          background:#25D366;
-          display:flex;align-items:center;justify-content:center;">
-          <span style="color:white;font-size:18px;">💬</span>
-        </div>
-        <div>
-          <p style="font-weight:600;color:#0D1B3E;font-size:14px;margin:0;">
-            WhatsApp</p>
-          <p style="color:rgba(13,27,62,0.4);font-size:12px;margin:2px 0 0;">
-            Chat with us directly</p>
-        </div>
-        <span style="margin-left:auto;color:rgba(13,27,62,0.3);font-size:18px;">→</span>
-      </a>
-
-    </div>
-  </div>
-
-  <script>
-    function openContact() {
-      const modal = document.getElementById('contact-modal');
-      modal.style.display = 'flex';
-    }
-
-    function closeContact() {
-      const modal = document.getElementById('contact-modal');
-      modal.style.display = 'none';
-    }
-
-    document.getElementById('contact-modal').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('contact-modal')) {
-        closeContact();
-      }
-    });
-  </script>
-
-  <!-- SVG Filter for Blob Button -->
-  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: none;">
-    <defs>
-      <filter id="goo">
-        <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
-        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo"></feColorMatrix>
-        <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
-      </filter>
-    </defs>
-  </svg>
-</body>
-
-</html>
-
-
-        onmouseout="this.style.background='#fff'">
-        <div style="
-          width:40px;height:40px;border-radius:10px;
-          background:#25D366;
-          display:flex;align-items:center;justify-content:center;">
-          <span style="color:white;font-size:18px;">💬</span>
-        </div>
-        <div>
-          <p style="font-weight:600;color:#0D1B3E;font-size:14px;margin:0;">
-            WhatsApp</p>
-          <p style="color:rgba(13,27,62,0.4);font-size:12px;margin:2px 0 0;">
-            Chat with us directly</p>
-        </div>
-        <span style="margin-left:auto;color:rgba(13,27,62,0.3);font-size:18px;">→</span>
-      </a>
-
-    </div>
-  </div>
-
-  <script>
-    function openContact() {
-      const modal = document.getElementById('contact-modal');
-      modal.style.display = 'flex';
-    }
-
-    function closeContact() {
-      const modal = document.getElementById('contact-modal');
-      modal.style.display = 'none';
-    }
-
-    document.getElementById('contact-modal').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('contact-modal')) {
-        closeContact();
-      }
-    });
-  </script>
-
-  <!-- SVG Filter for Blob Button -->
-  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: none;">
-    <defs>
-      <filter id="goo">
-        <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
-        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo"></feColorMatrix>
-        <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
-      </filter>
-    </defs>
-  </svg>
-
-  <script src="app.js"></script>
-</body>
-</html>
-
           <span>WhatsApp</span>
         </a>
         <a href="https://www.youtube.com/@sfnusp" aria-label="Watch SF NUSP on YouTube" target="_blank"
@@ -334,9 +560,10 @@ else:
         <p>© 2026 SF NUSP. All rights reserved.</p>
       </div>
     </footer>
-  </div>
 
-  <!-- Lightbox Modal for Moments Gallery -->
+  </div><!-- /.page-shell -->
+
+  <!-- Lightbox Modal -->
   <div id="lightbox-modal" class="lightbox-modal" aria-hidden="true" role="dialog">
     <button class="lightbox-close" aria-label="Close image lightbox">&times;</button>
     <div class="lightbox-content">
@@ -344,107 +571,82 @@ else:
     </div>
   </div>
 
-  <script src="app.js"></script>
-
   <!-- Contact Modal -->
   <div id="contact-modal" style="
-    display:none;
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:rgba(0,0,0,0.5);
-    backdrop-filter:blur(6px);
-    z-index:9999;
-    align-items:center;
-    justify-content:center;">
-
+    display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);
+    z-index:9999;align-items:center;justify-content:center;">
     <div style="
-      background:#fff;
-      border-radius:20px;
-      padding:36px;
-      max-width:380px;
-      width:90%;
-      position:relative;
+      background:#fff;border-radius:20px;padding:36px;
+      max-width:380px;width:90%;position:relative;
       box-shadow:0 24px 60px rgba(0,0,0,0.15);">
-
-      <button onclick="closeContact()" style="
-        position:absolute;top:16px;right:16px;
-        background:rgba(13,27,62,0.08);
-        border:none;border-radius:50%;
-        width:32px;height:32px;
-        font-size:16px;cursor:pointer;
-        display:flex;align-items:center;justify-content:center;">
-        ✕
-      </button>
-
-      <h3 style="
-        font-family:'Playfair Display',serif;
-        font-size:22px;color:#0D1B3E;
-        margin-bottom:6px;">Get in Touch</h3>
-      <p style="
-        font-size:13px;color:rgba(13,27,62,0.5);
-        margin-bottom:28px;">
-        We would love to hear from you. Reach out on any platform below.
-      </p>
-
-      <a href="https://instagram.com/sf_nusp" target="_blank" style="
-          display:flex;align-items:center;gap:14px;
-          padding:14px 18px;border-radius:12px;
-          border:1px solid rgba(13,27,62,0.1);
-          text-decoration:none;margin-bottom:12px;
-          transition:all 0.2s;background:#fff;" onmouseover="this.style.background='#fff0f0'"
-        onmouseout="this.style.background='#fff'">
-        <div style="
-          width:40px;height:40px;border-radius:10px;
-          background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
-          display:flex;align-items:center;justify-content:center;">
-          <span style="color:white;font-size:18px;">📸</span>
-        </div>
-    
-          <p style="font-we
-          background:#25D366;
+      <button onclick="closeContact()" style="
+        position:absolute;top:16px;right:16px;
+        background:rgba(13,27,62,0.08);border:none;border-radius:50%;
+        width:32px;height:32px;font-size:16px;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;">✕</button>
+      <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:#0D1B3E;margin-bottom:6px;">Get in Touch</h3>
+      <p style="font-size:13px;color:rgba(13,27,62,0.5);margin-bottom:28px;">
+        We would love to hear from you. Reach out on any platform below.</p>
+      <a href="https://instagram.com/sf_nusp" target="_blank" style="
+          display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:12px;
+          border:1px solid rgba(13,27,62,0.1);text-decoration:none;margin-bottom:12px;
+          transition:all 0.2s;background:#fff;"
+        onmouseover="this.style.background='#fff0f0'" onmouseout="this.style.background='#fff'">
+        <div style="width:40px;height:40px;border-radius:10px;
+          background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+          display:flex;align-items:center;justify-content:center;">
+          <span style="color:white;font-size:18px;">📸</span>
+        </div>
+        <div>
+          <p style="font-weight:600;color:#0D1B3E;font-size:14px;margin:0;">Instagram</p>
+          <p style="color:rgba(13,27,62,0.4);font-size:12px;margin:2px 0 0;">Follow us for updates</p>
+        </div>
+        <span style="margin-left:auto;color:rgba(13,27,62,0.3);font-size:18px;">→</span>
+      </a>
+      <a href="https://wa.me/918329094056" target="_blank" style="
+          display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:12px;
+          border:1px solid rgba(13,27,62,0.1);text-decoration:none;margin-bottom:12px;
+          transition:all 0.2s;background:#fff;"
+        onmouseover="this.style.background='#eafaf1'" onmouseout="this.style.background='#fff'">
+        <div style="width:40px;height:40px;border-radius:10px;background:#25D366;
           display:flex;align-items:center;justify-content:center;">
           <span style="color:white;font-size:18px;">💬</span>
         </div>
         <div>
-          <p style="font-weight:600;color:#0D1B3E;font-size:14px;margin:0;">
-            WhatsApp</p>
-          <p style="color:rgba(13,27,62,0.4);font-size:12px;margin:2px 0 0;">
-            Chat with us directly</p>
+          <p style="font-weight:600;color:#0D1B3E;font-size:14px;margin:0;">WhatsApp</p>
+          <p style="color:rgba(13,27,62,0.4);font-size:12px;margin:2px 0 0;">Chat with us directly</p>
         </div>
         <span style="margin-left:auto;color:rgba(13,27,62,0.3);font-size:18px;">→</span>
       </a>
-
     </div>
   </div>
 
   <script>
     function openContact() {
-      const modal = document.getElementById('contact-modal');
-      modal.style.display = 'flex';
+      document.getElementById('contact-modal').style.display = 'flex';
     }
-
     function closeContact() {
-      const modal = document.getElementById('contact-modal');
-      modal.style.display = 'none';
+      document.getElementById('contact-modal').style.display = 'none';
     }
-
     document.getElementById('contact-modal').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('contact-modal')) {
-        closeContact();
-      }
+      if (e.target === document.getElementById('contact-modal')) closeContact();
     });
   </script>
 
-  <!-- SVG Filter for Blob Button -->
-  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: none;">
+  <!-- SVG Goo filter for blob button -->
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none;" aria-hidden="true">
     <defs>
       <filter id="goo">
         <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
-        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo"></feColorMatrix>
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7"
+          result="goo"></feColorMatrix>
         <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
-      </filter>
-    </defs>
-  </svg>
-</body>
-
-</html>
+      </filter>
+    </defs>
+  </svg>
 
+  <script src="app.js"></script>
+</body>
+
+</html>
