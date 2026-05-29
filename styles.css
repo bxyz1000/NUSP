@@ -3342,7 +3342,7 @@ body.join-page-glass .form-row textarea {
 }
 
 .footer-edge-watermark-lady {
-  left: 52px;
+  left: 10px;
   width: 257px;
   height: 420px;
 }
@@ -3353,7 +3353,7 @@ body.join-page-glass .form-row textarea {
 }
 
 .footer-edge-watermark-emblem {
-  right: 15px;
+  right: 0.01px;
   width: 345px;
   height: 345px;
 }

@@ -327,6 +327,218 @@
       filter: brightness(1.06);
     }
 
+    .message-store-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .admin-action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 18px;
+      border: 1px solid rgba(201, 168, 76, 0.35);
+      border-radius: 10px;
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .admin-action-button:hover,
+    .admin-action-button:focus-visible {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+    }
+
+    .message-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .message-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .message-card-title {
+      margin: 0;
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .message-body {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      white-space: pre-wrap;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .message-body.is-expanded {
+      display: block;
+      overflow: visible;
+    }
+
+    .message-expand-button {
+      margin: 12px 0 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .message-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .message-action-button {
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: "Inter", sans-serif;
+      font-weight: 700;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .message-action-button:hover,
+    .message-action-button:focus-visible {
+      transform: translateY(-1px);
+    }
+
+    .message-copy-button {
+      background: rgba(74, 222, 128, 0.12);
+      color: #4ade80;
+      border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+
+    .message-edit-button {
+      background: rgba(96, 165, 250, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(96, 165, 250, 0.3);
+    }
+
+    .message-delete-button {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .message-modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(3, 8, 18, 0.78);
+      backdrop-filter: blur(10px);
+      z-index: 80;
+    }
+
+    .message-modal.is-open {
+      display: flex;
+    }
+
+    .message-modal-card {
+      width: min(100%, 640px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 26px;
+    }
+
+    .message-modal-card h2 {
+      margin: 0;
+      font-size: 1.35rem;
+    }
+
+    .message-form {
+      display: grid;
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .message-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .message-field label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .message-field input,
+    .message-field textarea {
+      width: 100%;
+      border: 1px solid rgba(201, 168, 76, 0.28);
+      border-radius: 10px;
+      background: #0d1b3e;
+      color: var(--text);
+      outline: none;
+      font: inherit;
+    }
+
+    .message-field input {
+      min-height: 46px;
+      padding: 0 14px;
+    }
+
+    .message-field textarea {
+      min-height: 220px;
+      padding: 14px;
+      resize: vertical;
+      line-height: 1.65;
+    }
+
+    .message-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .message-cancel-button {
+      min-height: 42px;
+      padding: 0 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
     .data-top {
       display: flex;
       align-items: center;
@@ -601,7 +813,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc, setDoc, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc, serverTimestamp, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCJ8BelUmuSjVbK0VsfNtJIlM2B9AblNNc",
@@ -614,6 +826,160 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    window.messageTemplatesById = {};
+    window.messageTemplateEditId = null;
+    let latestMessageTemplateSnapshot = null;
+
+    function escapeHTML(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderMessageTemplates(snapshot) {
+      const container = document.getElementById('message-templates-container');
+      if (!container) return;
+
+      container.innerHTML = '';
+      window.messageTemplatesById = {};
+
+      const docs = snapshot.docs.slice().sort((a, b) => {
+        const aTime = a.data().createdAt && a.data().createdAt.toMillis ? a.data().createdAt.toMillis() : 0;
+        const bTime = b.data().createdAt && b.data().createdAt.toMillis ? b.data().createdAt.toMillis() : 0;
+        return bTime - aTime;
+      });
+
+      if (docs.length === 0) {
+        container.innerHTML = '<p style="opacity:0.5;text-align:center;padding:40px;">No saved message templates yet.</p>';
+        return;
+      }
+
+      docs.forEach((docSnap) => {
+        const d = docSnap.data();
+        const title = d.title || 'Untitled Message';
+        const body = d.body || '';
+        window.messageTemplatesById[docSnap.id] = { title, body };
+
+        container.innerHTML += `
+          <article class="message-card">
+            <div class="message-card-top">
+              <h2 class="message-card-title">${escapeHTML(title)}</h2>
+            </div>
+            <p class="message-body" id="message-body-${docSnap.id}">${escapeHTML(body)}</p>
+            <button class="message-expand-button" type="button" onclick="toggleMessageBody('${docSnap.id}', this)">Show more</button>
+            <div class="message-actions">
+              <button class="message-action-button message-copy-button" type="button" onclick="copyMessageTemplate('${docSnap.id}', this)">Copy</button>
+              <button class="message-action-button message-edit-button" type="button" onclick="openMessageTemplateModal('${docSnap.id}')">Edit</button>
+              <button class="message-action-button message-delete-button" type="button" onclick="deleteMessageTemplate('${docSnap.id}')">Delete</button>
+            </div>
+          </article>`;
+      });
+    }
+
+    onSnapshot(collection(db, "messageTemplates"), (snapshot) => {
+      latestMessageTemplateSnapshot = snapshot;
+      renderMessageTemplates(snapshot);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (latestMessageTemplateSnapshot) {
+        renderMessageTemplates(latestMessageTemplateSnapshot);
+      }
+    });
+
+    window.toggleMessageBody = (docId, btnEl) => {
+      const bodyEl = document.getElementById(`message-body-${docId}`);
+      if (!bodyEl) return;
+      const isExpanded = bodyEl.classList.toggle('is-expanded');
+      btnEl.textContent = isExpanded ? 'Show less' : 'Show more';
+    };
+
+    window.copyMessageTemplate = async (docId, btnEl) => {
+      const template = window.messageTemplatesById[docId];
+      if (!template) return;
+
+      try {
+        await navigator.clipboard.writeText(template.body);
+      } catch (error) {
+        const textArea = document.createElement('textarea');
+        textArea.value = template.body;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+
+      const originalText = btnEl.textContent;
+      btnEl.textContent = 'Copied!';
+      setTimeout(() => {
+        btnEl.textContent = originalText;
+      }, 2000);
+    };
+
+    window.openMessageTemplateModal = (docId = null) => {
+      window.messageTemplateEditId = docId;
+      const modal = document.getElementById('message-template-modal');
+      const modalTitle = document.getElementById('message-template-modal-title');
+      const titleInput = document.getElementById('message-template-title');
+      const bodyInput = document.getElementById('message-template-body');
+      const template = docId ? window.messageTemplatesById[docId] : null;
+
+      modalTitle.textContent = docId ? 'Edit Message' : 'New Message';
+      titleInput.value = template ? template.title : '';
+      bodyInput.value = template ? template.body : '';
+      modal.classList.add('is-open');
+      titleInput.focus();
+    };
+
+    window.closeMessageTemplateModal = () => {
+      const modal = document.getElementById('message-template-modal');
+      modal.classList.remove('is-open');
+      window.messageTemplateEditId = null;
+      document.getElementById('message-template-title').value = '';
+      document.getElementById('message-template-body').value = '';
+    };
+
+    window.saveMessageTemplate = async () => {
+      const title = document.getElementById('message-template-title').value.trim();
+      const body = document.getElementById('message-template-body').value.trim();
+
+      if (!title || !body) {
+        alert('Please enter both a title and message body.');
+        return;
+      }
+
+      try {
+        if (window.messageTemplateEditId) {
+          await updateDoc(doc(db, "messageTemplates", window.messageTemplateEditId), { title, body });
+        } else {
+          await addDoc(collection(db, "messageTemplates"), {
+            title,
+            body,
+            createdAt: serverTimestamp()
+          });
+        }
+        window.closeMessageTemplateModal();
+      } catch (error) {
+        alert('Error saving message. Please try again.');
+        console.error(error);
+      }
+    };
+
+    window.deleteMessageTemplate = async (docId) => {
+      const confirmed = confirm('Are you sure you want to delete this message template? This cannot be undone.');
+      if (!confirmed) return;
+
+      try {
+        await deleteDoc(doc(db, "messageTemplates", docId));
+      } catch (error) {
+        alert('Error deleting message. Please try again.');
+        console.error(error);
+      }
+    };
 
     // LIVE JOIN REQUESTS
     onSnapshot(collection(db, "join_requests"), (snapshot) => {
@@ -895,6 +1261,15 @@
               <div><p style="font-size:10px;color:rgba(255,255,255,0.4);
               text-transform:uppercase;letter-spacing:1px;">Heard From</p>
               <p class="editable-value" data-field="heardFrom" style="color:#fff;margin-top:2px;">${d.heardFrom || 'Not specified'}</p></div>
+              ${d.promoCode ? `
+              <div style="grid-column: span 2; margin-top: 8px;">
+                <p style="font-size:10px;color:rgba(255,255,255,0.4);
+                text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Promo Code</p>
+                <div style="display:inline-flex;align-items:center;background:linear-gradient(135deg, rgba(201,168,76,0.15) 0%, rgba(79,211,138,0.15) 100%);border:1px solid rgba(79,211,138,0.4);padding:6px 14px;border-radius:20px;box-shadow:0 4px 12px rgba(79,211,138,0.15);gap:6px;">
+                  <span style="font-size:14px;">🏷️</span>
+                  <span style="color:#4fd38a;font-weight:800;letter-spacing:0.5px;font-size:13px;">${d.promoCode}</span>
+                </div>
+              </div>` : ''}
             </div>
           </div>`;
       });
@@ -1097,7 +1472,7 @@
     <div style="width:72px;height:72px;border-radius:50%;
     border:2px solid #C9A84C;margin:0 auto 24px;
     display:flex;align-items:center;justify-content:center;">
-      <img src="../528574843_17847690624537071_7871074800796948845_n.jpg" 
+      <img src="../assets/Adobe%20Express%20-%20file.png" alt="SF NUSP logo"
         style="width:60px;height:60px;border-radius:50%;object-fit:cover;">
     </div>
 
@@ -1169,6 +1544,10 @@
         <button class="nav-item" type="button" data-view-target="yuvaad-registrations">
           <span class="nav-icon">🏛️</span>
           <span>Yuvaad Registrations</span>
+        </button>
+        <button class="nav-item" type="button" data-view-target="message-store">
+          <span class="nav-icon">💬</span>
+          <span>Message Store</span>
         </button>
         <button class="nav-item" type="button" data-view-target="settings">
           <span class="nav-icon">⚙️</span>
@@ -1547,6 +1926,20 @@
           </div>
         </section>
 
+        <section class="view" data-view="message-store">
+          <div class="message-store-header">
+            <header class="page-header">
+              <h1>Message Store</h1>
+              <p>Reusable message templates for manual applicant follow-up.</p>
+            </header>
+            <button class="admin-action-button" type="button" onclick="openMessageTemplateModal()">+ New Message</button>
+          </div>
+
+          <div class="data-stack" id="message-templates-container">
+            <p style="opacity:0.5;text-align:center;padding:40px;">Loading message templates...</p>
+          </div>
+        </section>
+
         <section class="view" data-view="settings">
           <header class="page-header">
             <h1>Settings</h1>
@@ -1560,6 +1953,26 @@
         </section>
       </div>
     </main>
+  </div>
+
+  <div class="message-modal" id="message-template-modal" aria-hidden="true">
+    <div class="message-modal-card" role="dialog" aria-modal="true" aria-labelledby="message-template-modal-title">
+      <h2 id="message-template-modal-title">New Message</h2>
+      <form class="message-form" onsubmit="event.preventDefault(); saveMessageTemplate();">
+        <div class="message-field">
+          <label for="message-template-title">Title</label>
+          <input id="message-template-title" type="text" placeholder="Confirmation Message">
+        </div>
+        <div class="message-field">
+          <label for="message-template-body">Message Body</label>
+          <textarea id="message-template-body" placeholder="Write the full reusable message here..."></textarea>
+        </div>
+        <div class="message-modal-actions">
+          <button class="message-cancel-button" type="button" onclick="closeMessageTemplateModal()">Cancel</button>
+          <button class="admin-action-button" type="submit">Save Message</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script>
