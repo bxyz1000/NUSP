@@ -29,7 +29,7 @@
   <!-- Firebase: Firestore Countdown Timer (3-mode: closed / soon / countdown) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, onSnapshot, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCJ8BelUmuSjVbK0VsfNtJIlM2B9AblNNc",
@@ -86,6 +86,69 @@
         }, 1000);
       }
     });
+
+    // ── POSTERS SECTION ────────────────────────────────────────────────────────
+    (async () => {
+      const postersSection = document.getElementById('posters-section');
+      if (!postersSection) return;
+
+      try {
+        const q = query(collection(db, 'posters'), orderBy('order', 'asc'));
+        const snap = await getDocs(q);
+        const posters = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        if (posters.length === 0) {
+          postersSection.style.display = 'none';
+          return;
+        }
+
+        postersSection.style.display = 'block';
+        const track = document.getElementById('poster-track');
+        const dotsWrap = document.getElementById('poster-dots');
+
+        posters.forEach((p, i) => {
+          const slide = document.createElement('div');
+          slide.className = 'poster-slide' + (i === 0 ? ' is-active' : '');
+          slide.innerHTML = `<img src="${p.url}" alt="NUSP Poster ${i + 1}" loading="lazy">`;
+          track.appendChild(slide);
+
+          if (posters.length > 1) {
+            const dot = document.createElement('button');
+            dot.className = 'poster-dot' + (i === 0 ? ' is-active' : '');
+            dot.setAttribute('aria-label', `Go to poster ${i + 1}`);
+            dot.addEventListener('click', () => goToSlide(i));
+            dotsWrap.appendChild(dot);
+          }
+        });
+
+        if (posters.length <= 1) return;
+
+        let current = 0;
+        let timer;
+
+        function goToSlide(idx) {
+          const slides = track.querySelectorAll('.poster-slide');
+          const dots = dotsWrap.querySelectorAll('.poster-dot');
+          slides[current].classList.remove('is-active');
+          dots[current] && dots[current].classList.remove('is-active');
+          current = (idx + posters.length) % posters.length;
+          slides[current].classList.add('is-active');
+          dots[current] && dots[current].classList.add('is-active');
+          resetTimer();
+        }
+
+        function resetTimer() {
+          clearInterval(timer);
+          timer = setInterval(() => goToSlide(current + 1), 4000);
+        }
+
+        resetTimer();
+      } catch (err) {
+        console.error('Posters fetch error:', err);
+        const postersSection = document.getElementById('posters-section');
+        if (postersSection) postersSection.style.display = 'none';
+      }
+    })();
   </script>
 </head>
 
@@ -292,6 +355,21 @@
         </blockquote>
         <hr class="glass-divider">
       </div>
+
+      <!-- ══ POSTERS SECTION ══ -->
+      <section id="posters-section" class="posters-section section-frame" style="display:none;">
+        <div class="section-heading">
+          <p class="eyebrow">LATEST UPDATES</p>
+          <h2>Latest Updates</h2>
+        </div>
+        <div class="poster-stage">
+          <div class="poster-glow" aria-hidden="true"></div>
+          <div class="poster-card">
+            <div id="poster-track" class="poster-track"></div>
+          </div>
+        </div>
+        <div id="poster-dots" class="poster-dots" aria-label="Poster navigation"></div>
+      </section>
 
       <!-- ══ UPCOMING EVENTS ══ -->
       <section class="upcoming-events section-frame">
