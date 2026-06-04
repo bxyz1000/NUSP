@@ -149,6 +149,48 @@
         if (postersSection) postersSection.style.display = 'none';
       }
     })();
+
+    // -- MOMENTS GALLERY -------------------------------------------------------
+    (async () => {
+      const track = document.getElementById('moments-track');
+      if (!track) return;
+
+      try {
+        const q = query(collection(db, 'moments'), orderBy('order', 'asc'));
+        const snap = await getDocs(q);
+        const moments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        if (moments.length === 0) return;
+
+        track.innerHTML = '';
+
+        function appendMoment(moment, index, isDuplicate) {
+          const box = document.createElement('div');
+          box.className = 'photo-box';
+          if (moment.aspectRatio) {
+            box.style.aspectRatio = String(moment.aspectRatio);
+          }
+          if (isDuplicate) box.setAttribute('aria-hidden', 'true');
+
+          const img = document.createElement('img');
+          img.src = moment.url;
+          img.alt = isDuplicate ? '' : (moment.alt || `Youth Parliament Session ${index + 1}`);
+          img.loading = 'lazy';
+
+          box.appendChild(img);
+          track.appendChild(box);
+        }
+
+        moments.forEach((moment, index) => appendMoment(moment, index, false));
+        moments.forEach((moment, index) => appendMoment(moment, index, true));
+
+        if (window.setupMomentsGallery) {
+          window.setupMomentsGallery();
+        }
+      } catch (err) {
+        console.error('Moments fetch error:', err);
+      }
+    })();
   </script>
 </head>
 
@@ -437,7 +479,7 @@
       <!-- ══ MOMENTS GALLERY ══ -->
       <section class="moments section-frame">
         <div class="moments-strip">
-          <div class="moments-track">
+          <div class="moments-track" id="moments-track">
             <div class="photo-box"><img src="assets/20250915_110258.jpg" alt="Youth Parliament Session 1"></div>
             <div class="photo-box"><img src="assets/20250915_115620.jpg" alt="Youth Parliament Session 2"></div>
             <div class="photo-box"><img src="assets/20250915_121804.jpg" alt="Youth Parliament Session 3"></div>

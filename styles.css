@@ -734,7 +734,7 @@ main {
 
 .photo-box {
   width: 280px;
-  height: 200px;
+  aspect-ratio: 4 / 3;
   border-radius: 12px;
   border: 1px solid rgba(13, 27, 62, 0.12);
   background:
@@ -1486,7 +1486,6 @@ main {
 
   .photo-box {
     width: 240px;
-    height: 172px;
   }
 
   .register-card {
@@ -3978,8 +3977,7 @@ body.lightbox-open {
   }
 
   .photo-box {
-    min-width: 240px;
-    height: 160px;
+    width: 240px;
   }
 
   /* Event glass card */

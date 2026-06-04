@@ -360,6 +360,10 @@ function setupMomentsGallery() {
 
   // Attach click listeners to all photo boxes
   photoBoxes.forEach((box) => {
+    if (box.dataset.lightboxBound === "true") {
+      return;
+    }
+
     const img = box.querySelector("img");
     if (!img) return;
 
@@ -378,7 +382,13 @@ function setupMomentsGallery() {
         openLightbox(img.src, img.alt);
       }
     });
+
+    box.dataset.lightboxBound = "true";
   });
+
+  if (modal.dataset.lightboxBound === "true") {
+    return;
+  }
 
   // Close triggers
   closeBtn.addEventListener("click", closeLightbox);
@@ -396,8 +406,11 @@ function setupMomentsGallery() {
       closeLightbox();
     }
   });
+
+  modal.dataset.lightboxBound = "true";
 }
 
+window.setupMomentsGallery = setupMomentsGallery;
 setupMomentsGallery();
 
 

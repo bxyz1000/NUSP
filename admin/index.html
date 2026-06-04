@@ -867,6 +867,10 @@
       object-fit: cover;
       display: block;
     }
+    .pm-preview-frame.is-landscape {
+      width: min(100%, 320px);
+      aspect-ratio: 7 / 5;
+    }
     .pm-progress-track {
       width: 100%;
       height: 6px;
@@ -974,8 +978,8 @@
     // 1. Create free account at cloudinary.com
     // 2. Note your Cloud Name from the dashboard
     // 3. Settings → Upload → Add upload preset → set to "Unsigned" → save
-    const CLOUDINARY_CLOUD_NAME = 'dkbsgk1ym';
-    const CLOUDINARY_UPLOAD_PRESET = 'nusp_posters';
+    const CLOUDINARY_CLOUD_NAME = 'deuj83dvu';
+    const CLOUDINARY_UPLOAD_PRESET = 'nusp_poster';
 
     const firebaseConfig = {
       apiKey: "AIzaSyCJ8BelUmuSjVbK0VsfNtJIlM2B9AblNNc",
@@ -1791,9 +1795,192 @@
       });
     }
 
+    // ── MOMENTS MANAGER ──────────────────────────────────────────────────────
+    let momentDropFile = null;
+
+    function initMomentsManager() {
+      const dropZone = document.getElementById('moment-drop-zone');
+      const fileInput = document.getElementById('moment-file-input');
+      const previewWrap = document.getElementById('moment-preview-wrap');
+      const previewImg = document.getElementById('moment-preview-img');
+      const previewFrame = previewWrap.querySelector('.pm-preview-frame');
+      const uploadBtn = document.getElementById('moment-upload-btn');
+      const progressWrap = document.getElementById('moment-progress-wrap');
+      const progressBar = document.getElementById('moment-progress-bar');
+      const progressText = document.getElementById('moment-progress-text');
+      const statusMsg = document.getElementById('moment-status-msg');
+
+      function showPreview(file) {
+        if (!file) return;
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+          statusMsg.textContent = '❌ Only JPEG, PNG, and WebP images are allowed.';
+          statusMsg.style.color = '#ff6b6b';
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          statusMsg.textContent = '❌ File too large. Max size is 5MB.';
+          statusMsg.style.color = '#ff6b6b';
+          return;
+        }
+        momentDropFile = file;
+        statusMsg.textContent = '';
+        const reader = new FileReader();
+        reader.onload = e => {
+          previewImg.src = e.target.result;
+          previewImg.onload = () => {
+            if (previewImg.naturalWidth && previewImg.naturalHeight) {
+              previewFrame.style.aspectRatio = `${previewImg.naturalWidth} / ${previewImg.naturalHeight}`;
+            }
+          };
+          previewWrap.style.display = 'block';
+          uploadBtn.style.display = 'inline-flex';
+        };
+        reader.readAsDataURL(file);
+      }
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+      dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file) showPreview(file);
+      });
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files[0]) showPreview(fileInput.files[0]);
+      });
+
+      uploadBtn.addEventListener('click', async () => {
+        if (!momentDropFile) return;
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = 'Uploading...';
+        progressWrap.style.display = 'block';
+        statusMsg.textContent = '';
+
+        if (CLOUDINARY_CLOUD_NAME === 'YOUR_CLOUD_NAME') {
+          statusMsg.textContent = '⚙️ Please set CLOUDINARY_CLOUD_NAME and CLOUDINARY_UPLOAD_PRESET in the script.';
+          statusMsg.style.color = '#f0c040';
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = 'Upload Moment';
+          progressWrap.style.display = 'none';
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', momentDropFile);
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+        formData.append('folder', 'nusp_moments');
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`);
+
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const pct = Math.round((e.loaded / e.total) * 100);
+            progressBar.style.width = pct + '%';
+            progressText.textContent = pct + '%';
+          }
+        };
+
+        xhr.onload = async () => {
+          if (xhr.status === 200) {
+            const data = JSON.parse(xhr.responseText);
+            const timestamp = Date.now();
+            const width = Number(data.width) || null;
+            const height = Number(data.height) || null;
+            await addDoc(collection(db, 'moments'), {
+              url: data.secure_url,
+              width,
+              height,
+              aspectRatio: width && height ? width / height : null,
+              order: timestamp,
+              uploadedAt: serverTimestamp()
+            });
+            statusMsg.textContent = '✅ Moment uploaded successfully!';
+            statusMsg.style.color = '#4fd38a';
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = 'Upload Moment';
+            progressWrap.style.display = 'none';
+            progressBar.style.width = '0';
+            progressText.textContent = '0%';
+            previewWrap.style.display = 'none';
+            uploadBtn.style.display = 'none';
+            previewImg.src = '';
+            previewFrame.style.aspectRatio = '';
+            momentDropFile = null;
+            fileInput.value = '';
+          } else {
+            const err = JSON.parse(xhr.responseText);
+            statusMsg.textContent = '❌ Upload failed: ' + (err.error?.message || xhr.status);
+            statusMsg.style.color = '#ff6b6b';
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = 'Upload Moment';
+            progressWrap.style.display = 'none';
+          }
+        };
+
+        xhr.onerror = () => {
+          statusMsg.textContent = '❌ Network error. Check your internet connection.';
+          statusMsg.style.color = '#ff6b6b';
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = 'Upload Moment';
+          progressWrap.style.display = 'none';
+        };
+
+        xhr.send(formData);
+      });
+    }
+
+    function loadMomentGrid() {
+      const grid = document.getElementById('moment-grid');
+      const q = query(collection(db, 'moments'), orderBy('order', 'asc'));
+      onSnapshot(q, snap => {
+        grid.innerHTML = '';
+        if (snap.empty) {
+          grid.innerHTML = '<p style="opacity:0.5;text-align:center;padding:40px;grid-column:1/-1;">No moments uploaded yet. The site will keep showing the default photos.</p>';
+          return;
+        }
+        snap.forEach(docSnap => {
+          const d = docSnap.data();
+          const uploadDate = d.uploadedAt ? new Date(d.uploadedAt.toDate()).toLocaleDateString('en-IN') : 'Unknown';
+          const aspectRatio = d.aspectRatio || (d.width && d.height ? d.width / d.height : null);
+          const card = document.createElement('div');
+          card.className = 'pm-poster-card';
+          card.innerHTML = `
+            <div class="pm-poster-thumb" style="${aspectRatio ? `aspect-ratio:${aspectRatio};` : 'aspect-ratio:4 / 3;'}">
+              <img src="${d.url}" alt="Moment" loading="lazy">
+            </div>
+            <div class="pm-poster-meta">
+              <span class="pm-poster-date">${uploadDate}</span>
+              <button class="pm-delete-btn" data-id="${docSnap.id}">
+                🗑 Delete
+              </button>
+            </div>`;
+          card.querySelector('.pm-delete-btn').addEventListener('click', async (e) => {
+            const btn = e.currentTarget;
+            const confirmed = window.confirm('Delete this moment from the gallery?');
+            if (!confirmed) return;
+            btn.disabled = true;
+            btn.textContent = 'Deleting...';
+            try {
+              await deleteDoc(doc(db, 'moments', btn.dataset.id));
+            } catch (err) {
+              alert('Error deleting moment: ' + err.message);
+              btn.disabled = false;
+              btn.textContent = '🗑 Delete';
+            }
+          });
+          grid.appendChild(card);
+        });
+      });
+    }
+
     // Module scripts are deferred — DOM is already ready, call directly
     try { initPosterManager(); } catch(e) { console.warn('Poster manager init:', e); }
     try { loadPosterGrid(); } catch(e) { console.warn('Poster grid load:', e); }
+    try { initMomentsManager(); } catch(e) { console.warn('Moments manager init:', e); }
+    try { loadMomentGrid(); } catch(e) { console.warn('Moments grid load:', e); }
   </script>
 </head>
 <body>
@@ -1955,6 +2142,10 @@
         <button class="nav-item" type="button" data-view-target="poster-manager">
           <span class="nav-icon">🖼️</span>
           <span>Poster Manager</span>
+        </button>
+        <button class="nav-item" type="button" data-view-target="moments-manager">
+          <span class="nav-icon">📷</span>
+          <span>Moments Manager</span>
         </button>
       </nav>
 
@@ -2404,6 +2595,58 @@
               <p style="opacity:0.5;text-align:center;padding:40px;grid-column:1/-1;">Loading posters...</p>
             </div>
             <p class="pm-storage-note">⚠️ Free plan: 1GB storage limit. Deleting a poster also removes it from Firebase Storage.</p>
+          </div>
+        </section>
+
+        <!-- ══ MOMENTS MANAGER VIEW ══ -->
+        <section class="view" data-view="moments-manager">
+          <header class="page-header">
+            <h1>Moments Manager 📷</h1>
+            <p>Upload and manage images shown in the main site's "Our Moments" gallery.</p>
+          </header>
+
+          <!-- Upload Zone -->
+          <div class="pm-panel">
+            <h2 class="section-title">Upload New Moment</h2>
+            <div id="moment-drop-zone" class="pm-drop-zone" role="button" tabindex="0" aria-label="Upload moment image">
+              <div class="pm-drop-icon">📁</div>
+              <p class="pm-drop-label">Drag &amp; drop moment image here or <span>click to upload</span></p>
+              <p class="pm-drop-hint">Accepts: JPEG, PNG, WebP &nbsp;·&nbsp; Max 5MB &nbsp;·&nbsp; Use 4:3 or 16:9 landscape photos</p>
+              <input type="file" id="moment-file-input" accept="image/jpeg,image/png,image/webp" style="display:none;">
+            </div>
+
+            <!-- Preview -->
+            <div id="moment-preview-wrap" style="display:none;margin-top:24px;text-align:center;">
+              <p style="color:var(--muted);font-size:0.82rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">Preview (actual ratio)</p>
+              <div class="pm-preview-frame is-landscape">
+                <img id="moment-preview-img" src="" alt="Moment preview">
+              </div>
+            </div>
+
+            <!-- Progress -->
+            <div id="moment-progress-wrap" style="display:none;margin-top:20px;">
+              <div class="pm-progress-track">
+                <div id="moment-progress-bar" class="pm-progress-fill" style="width:0%;"></div>
+              </div>
+              <p id="moment-progress-text" style="text-align:center;font-size:0.8rem;color:var(--muted);margin-top:6px;">0%</p>
+            </div>
+
+            <!-- Status message -->
+            <p id="moment-status-msg" style="text-align:center;font-size:0.9rem;margin-top:12px;"></p>
+
+            <!-- Upload button (shown after preview) -->
+            <div style="text-align:center;margin-top:20px;">
+              <button id="moment-upload-btn" class="admin-action-button" style="display:none;">Upload Moment</button>
+            </div>
+          </div>
+
+          <!-- Current Moments Grid -->
+          <div class="pm-panel" style="margin-top:24px;">
+            <h2 class="section-title">Current Moments</h2>
+            <div id="moment-grid" class="pm-poster-grid">
+              <p style="opacity:0.5;text-align:center;padding:40px;grid-column:1/-1;">Loading moments...</p>
+            </div>
+            <p class="pm-storage-note">⚠️ If no moments are uploaded here, the website keeps showing the default photos.</p>
           </div>
         </section>
       </div>
