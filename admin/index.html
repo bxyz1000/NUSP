@@ -2467,7 +2467,8 @@
         });
       });
 
-      if (menuButton && sidebar) {
+      if (menuButton && sidebar && !menuButton.dataset.menuToggleBound) {
+        menuButton.dataset.menuToggleBound = 'true';
         menuButton.addEventListener('click', function() {
           var isOpen = menuButton.getAttribute('aria-expanded') === 'true';
           menuButton.setAttribute('aria-expanded', String(!isOpen));
@@ -2810,7 +2811,8 @@
       });
     });
 
-    if (menuButton && sidebar) {
+    if (menuButton && sidebar && !menuButton.dataset.menuToggleBound) {
+      menuButton.dataset.menuToggleBound = "true";
       menuButton.addEventListener("click", () => {
         const isOpen = menuButton.getAttribute("aria-expanded") === "true";
         menuButton.setAttribute("aria-expanded", String(!isOpen));
