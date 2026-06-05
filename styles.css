@@ -4174,3 +4174,109 @@ body.lightbox-open {
   }
 }
 
+
+/* --- ABOUT US SECTION STYLES --- */
+.about-us-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 40px;
+}
+
+.about-us .section-heading {
+  margin-bottom: 24px;
+}
+
+.info-grid.about-values {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+article.info-card.value-chip {
+  min-height: auto;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+article.info-card.value-chip .value-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+article.info-card.value-chip p {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+@media (max-width: 980px) {
+  .info-grid.about-values {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .info-grid.about-values {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- User Requested Updates: About Us Card & Animations --- */
+
+/* Change 1: About Us Card */
+.about-us-card {
+  background: var(--surface);
+  border-left: 4px solid var(--accent);
+  border-radius: 18px;
+  padding: 32px 40px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  text-align: center;
+}
+
+body.dark-mode .about-us-card {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Change 2: Value Chips Animation */
+.value-chip {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out, box-shadow 0.3s ease, border-left-color 0.3s ease;
+  border-left-color: var(--accent); /* Keep existing gold but allow transition */
+}
+
+.value-chip.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.value-chip:hover {
+  transform: translateY(-4px) !important; /* Force lift */
+  border-left-color: #ffd700 !important; /* Brighter gold on hover */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .value-chip:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Move Lady Justice to the right for About Us section */
+.about-us .quote-lady-justice {
+  left: auto;
+  right: -68px;
+  transform: translateY(-50%) scaleX(-1);
+}
+
+@media (max-width: 980px) {
+  .about-us .quote-lady-justice {
+    left: auto;
+    right: -40px;
+  }
+}
