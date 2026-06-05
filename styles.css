@@ -43,8 +43,8 @@ body.dark-mode {
 }
 
 body.dark-mode .navbar-container {
-  background: rgba(6,13,30,0.95) !important;
-  border-bottom: 1px solid rgba(201,168,76,0.15) !important;
+  background: rgba(6, 13, 30, 0.95) !important;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15) !important;
 }
 
 body.dark-mode section {
@@ -57,7 +57,7 @@ body.dark-mode .how-card,
 body.dark-mode .yuvaad-card-item {
   background: #112347 !important;
   color: #ffffff !important;
-  border-color: rgba(201,168,76,0.2) !important;
+  border-color: rgba(201, 168, 76, 0.2) !important;
 }
 
 body.dark-mode p,
@@ -68,15 +68,15 @@ body.dark-mode h3 {
 }
 
 body.dark-mode .secondary-text {
-  color: rgba(255,255,255,0.6) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 
 #back-to-top:hover {
-  background: rgba(255,255,255,0.38);
+  background: rgba(255, 255, 255, 0.38);
   color: #0D1B3E;
-  border-color: rgba(201,168,76,0.5);
+  border-color: rgba(201, 168, 76, 0.5);
   transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(13,27,62,0.18), 0 0 24px rgba(201,168,76,0.22), inset 0 1px 0 rgba(255,255,255,0.55);
+  box-shadow: 0 12px 30px rgba(13, 27, 62, 0.18), 0 0 24px rgba(201, 168, 76, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 img {
@@ -577,8 +577,8 @@ main {
   transform: scaleX(-1);
 }
 
-.impact-yuvaad > .section-heading,
-.impact-yuvaad > .section-copy {
+.impact-yuvaad>.section-heading,
+.impact-yuvaad>.section-copy {
   position: relative;
   z-index: 2;
 }
@@ -3801,6 +3801,7 @@ body.lightbox-open {
 }
 
 @media (max-width: 760px) {
+
   .hero-lady-justice,
   .quote-lady-justice {
     display: none;
@@ -4167,6 +4168,7 @@ body.lightbox-open {
   .poster-stage {
     padding: 0 16px;
   }
+
   .poster-card,
   .poster-glow {
     width: calc(100% - 32px);
@@ -4249,7 +4251,8 @@ body.dark-mode .about-us-card {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out, box-shadow 0.3s ease, border-left-color 0.3s ease;
-  border-left-color: var(--accent); /* Keep existing gold but allow transition */
+  border-left-color: var(--accent);
+  /* Keep existing gold but allow transition */
 }
 
 .value-chip.animate-in {
@@ -4258,8 +4261,10 @@ body.dark-mode .about-us-card {
 }
 
 .value-chip:hover {
-  transform: translateY(-4px) !important; /* Force lift */
-  border-left-color: #ffd700 !important; /* Brighter gold on hover */
+  transform: translateY(-4px) !important;
+  /* Force lift */
+  border-left-color: #ffd700 !important;
+  /* Brighter gold on hover */
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
@@ -4279,4 +4284,21 @@ body.dark-mode .value-chip:hover {
     left: auto;
     right: -40px;
   }
+}
+
+/* Founder Attribution */
+.founder-divider {
+  border: none;
+  border-top: 1px solid var(--accent);
+  margin: 32px 4 16px 0;
+  width: 100%;
+}
+
+.founder-attribution {
+  text-align: right;
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0;
 }
