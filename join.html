@@ -23,6 +23,8 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Fustat:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <!-- canvas-confetti: celebration effect on successful join submission -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <!-- Firebase: Save join requests to Firestore -->
   <script type="module">
@@ -59,6 +61,12 @@
             heardFrom: document.getElementById('heardFrom').value,
             timestamp: serverTimestamp()
           });
+
+          // Confetti celebration — fires once after successful Firestore write
+          const nuspColors = ['#FFD700', '#0D1B3E', '#F5F0E8', '#ffffff'];
+          confetti({ particleCount: 120, spread: 70, origin: { x: 0, y: 1 }, angle: 60, colors: nuspColors });
+          confetti({ particleCount: 120, spread: 70, origin: { x: 1, y: 1 }, angle: 120, colors: nuspColors });
+          confetti({ particleCount: 80, spread: 120, origin: { x: 0.5, y: 0.8 }, colors: nuspColors });
 
           document.getElementById('join-form').style.display = 'none';
           document.getElementById('success-message').style.display = 'block';
