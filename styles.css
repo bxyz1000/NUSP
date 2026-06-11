@@ -3365,6 +3365,13 @@ body.join-page-glass .form-row textarea {
   opacity: 0.25;
 }
 
+/* ── Responsive: hide edge watermarks on mobile so they don't overlap the quote card ── */
+@media (max-width: 768px) {
+  .footer-edge-watermark {
+    display: none;
+  }
+}
+
 /* ==========================================================================
    Section-level Corner Watermark System (to fill empty whitespace)
    ========================================================================== */
